@@ -1,0 +1,51 @@
+# Automatically generated files and folders
+bin/
+obj/
+
+# Temporary files
+[Tt]emp/
+[Oo]ut/
+
+# Visual Studio files
+.vs/
+*.vscode/
+*.suo
+*.user
+*.sln.docstates
+
+# NuGet packages
+*.nupkg
+*.pdb
+
+# Build files
+*.dll
+*.exe
+*.log
+*.config
+*.deploy
+
+# Publish files
+publish/
+
+# Dependency files
+*.dependencies
+*.opendb
+*.sqlite
+
+# Configuration files
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
+# Rider IDE files
+.idea/
+*.sln.iml
+
+# Visual Studio Code cache and temporary files
+.vscode/
+.project
+.settings
+.cproject
+.launch
+.buildpath
+
