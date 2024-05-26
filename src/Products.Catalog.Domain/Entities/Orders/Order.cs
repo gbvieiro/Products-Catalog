@@ -7,7 +7,7 @@ namespace Products.Catalog.Domain.Entities.Orders
     /// </summary>
     public class Order(
         Guid id, DateTime creationData, OrderStatusEnum status,
-        List<OrderItem> items, decimal totalAmount
+        List<OrderItem> items, double totalAmount
     ) : IEntity<Guid>
     {
         /// <summary>
@@ -33,7 +33,23 @@ namespace Products.Catalog.Domain.Entities.Orders
         /// <summary>
         /// Amount of values for this order.
         /// </summary>
-        public decimal TotalAmount { get; private set; } = totalAmount;
+        public double TotalAmount { get; private set; } = totalAmount;
+
+        /// <summary>
+        /// Set a new status for the order.
+        /// </summary>
+        public void SetStatus(OrderStatusEnum status)
+        {
+            this.Status = status;
+        }
+
+        /// <summary>
+        /// Recalcule the toral ammount.
+        /// </summary>
+        public void UpdateTotalAmount()
+        {
+            TotalAmount = Items.Sum(x => x.Amount);
+        }
 
         /// <summary>
         /// All entities must be able to verify equality. 

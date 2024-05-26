@@ -3,7 +3,7 @@ using Products.Catalog.Domain.Validations;
 using FluentAssertions;
 using Xunit;
 
-namespace Products.Catalog.Domain.Tests
+namespace Products.Catalog.Domain.Tests.Entities
 {
     public class BookUnitTests
     {
