@@ -47,7 +47,6 @@ namespace Products.Catalog.Domain.Entities.Books
         /// <summary>
         /// Define rules for a valid book.
         /// </summary>
-        /// <param name="name"></param>
         private void ValidateBookDomain()
         {
             // Title

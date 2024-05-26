@@ -1,39 +1,77 @@
 ﻿using Products.Catalog.Domain.Entities.Base;
+using Products.Catalog.Domain.Validations;
 
 namespace Products.Catalog.Domain.Entities.Orders
 {
     /// <summary>
     /// Represents a order in the product catalog.
     /// </summary>
-    public class Order(
-        Guid id, DateTime creationData, OrderStatusEnum status,
-        List<OrderItem> items, double totalAmount
-    ) : IEntity<Guid>
+    public class Order : IEntity<Guid>
     {
         /// <summary>
         /// A Order unique identificator.
         /// </summary>
-        public Guid Id { get; private set; } = id;
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// A creation data of this order.
         /// </summary>
-        public DateTime CreationData { get; private set; } = creationData;
+        public DateTime CreationData { get; private set; }
 
         /// <summary>
         /// Current order status.
         /// </summary>
-        public OrderStatusEnum Status { get; private set; } = status;
+        public OrderStatusEnum Status { get; private set; }
 
         /// <summary>
         /// Items that are included in this order.
         /// </summary>
-        public List<OrderItem> Items { get; private set; } = items;
+        public List<OrderItem> Items { get; private set; }
 
         /// <summary>
         /// Amount of values for this order.
         /// </summary>
-        public double TotalAmount { get; private set; } = totalAmount;
+        public double TotalAmount { get; private set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="id">A Order unique identificator.</param>
+        /// <param name="creationData">A creation data of this order.</param>
+        /// <param name="status">Current order status.</param>
+        /// <param name="items">Items that are included in this order.</param>
+        /// <param name="totalAmount">Amount of values for this order.</param>
+        public Order(
+            Guid id,
+            DateTime creationData,
+            OrderStatusEnum status,
+            List<OrderItem> items,
+            double totalAmount
+        )
+        {
+            Id = id;
+            CreationData = creationData;
+            Status = status;
+            Items = items;
+            TotalAmount = totalAmount;
+
+            ValidateBookDomain();
+        }
+
+        /// <summary>
+        /// Define rules for a valid book.
+        /// </summary>
+        private void ValidateBookDomain()
+        {
+            // Id
+            DomainExceptionValidation.When(
+                string.IsNullOrEmpty(Id.ToString()),
+                "Stock quantity invalid, could not be less than 0."
+            );
+
+            // Items
+            DomainExceptionValidation.When(Items == null || !Items.Any(), "A order must have order items.");
+        }
 
         /// <summary>
         /// Set a new status for the order.

@@ -1,4 +1,6 @@
-﻿namespace Products.Catalog.Domain.Entities.Orders
+﻿using Products.Catalog.Domain.Validations;
+
+namespace Products.Catalog.Domain.Entities.Orders
 {
     public class OrderItem
     {
@@ -17,9 +19,27 @@
             BookId = bookId;
             Quantity = quantity;
             Amount = amount;
+
+            ValidateOrderItemDomain();
         }
 
+        /// <summary>
+        /// Define rules for a valid book.
+        /// </summary>
+        private void ValidateOrderItemDomain()
+        {
+            // Id
+            DomainExceptionValidation.When(
+                string.IsNullOrEmpty(BookId.ToString()),
+                "A order item must have a book."
+            );
 
+            // Items
+            DomainExceptionValidation.When(
+                Quantity <= 0,
+                "Invalid item quantity, a valid quantity could not be 0 or less."
+            );
+        }
 
         /// <summary>
         /// Updated amount based on the current book price.
