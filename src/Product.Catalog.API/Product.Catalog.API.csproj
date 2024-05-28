@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Product.Catalog.Infra.IOC\Product.Catalog.Infra.IOC.csproj" />
     <ProjectReference Include="..\Products.Catalog.Application\Products.Catalog.Application.csproj" />
+    <ProjectReference Include="..\Products.Catalog.Infra.Mapper\Products.Catalog.Infra.Mapper.csproj" />
   </ItemGroup>
 
 </Project>

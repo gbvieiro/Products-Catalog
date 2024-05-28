@@ -4,8 +4,8 @@ namespace Products.Catalog.Domain.Services.Stock
 {
     public interface IOrderDomainService
     {
-        void ProcessNewOrder(Order order);
+        Task ProcessNewOrderAsync(Order order);
 
-        void CancelOrder(Order order);
+        Task CancelOrderAsync(Order order);
     }
 }

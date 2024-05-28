@@ -2,8 +2,8 @@
 
 namespace Products.Catalog.Application.DTOs.Filters
 {
-    public class TextFilterPaginationDTO(string text) : PaginationDTO
+    public class TextFilterPaginationDTO  : PaginationDTO
     {
-        public string Text { get; set; } = text;
+        public string? Text { get; set; }
     }
 }

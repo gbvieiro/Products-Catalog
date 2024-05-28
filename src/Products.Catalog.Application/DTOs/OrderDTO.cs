@@ -17,7 +17,7 @@ namespace Products.Catalog.Application.DTOs
         /// <summary>
         /// Items that are included in this order.
         /// </summary>
-        public required List<OrderItemDto> Items { get; set; }
+        public required List<OrderItemDTO> Items { get; set; }
 
         /// <summary>
         /// Amount of values for this order.
@@ -25,7 +25,7 @@ namespace Products.Catalog.Application.DTOs
         public required double TotalAmount { get; set; }
     }
 
-    public class OrderItemDto
+    public class OrderItemDTO
     {
         public Guid BookId { get; set; }
         public int Quantity { get; set; }

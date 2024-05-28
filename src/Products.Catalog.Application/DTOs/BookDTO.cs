@@ -1,5 +1,4 @@
 ﻿using Products.Catalog.Application.DTOs.Common;
-using System.ComponentModel.DataAnnotations;
 
 namespace Products.Catalog.Application.DTOs
 {

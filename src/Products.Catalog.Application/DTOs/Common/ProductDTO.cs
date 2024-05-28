@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Products.Catalog.Application.DTOs.Common
+﻿namespace Products.Catalog.Application.DTOs.Common
 {
     public abstract class ProductDTO : EntityDTO
     {

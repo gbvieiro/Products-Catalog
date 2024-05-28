@@ -6,17 +6,22 @@ namespace Product.Catalog.Infra.Data.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        public void Delete(Guid id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(Guid id)
         {
             Context.Orders = new List<Order>(Context.Orders.Where(x => x.Id !=id));
+
+            return Task.CompletedTask;
         }
 
-        public Order? Get(Guid id)
+        /// <inheritdoc/>
+        public Task<Order?> GetAsync(Guid id)
         {
-            return Context.Orders.FirstOrDefault(x => x.Id == id);
+            return Task.FromResult(Context.Orders.FirstOrDefault(x => x.Id == id));
         }
 
-        public IEnumerable<Order> GetAll(string filter, int skip, int take)
+        /// <inheritdoc/>
+        public Task<IEnumerable<Order>> GetAllAsync(string filter, int skip, int take)
         {
             if (Context.Orders == null)
             {
@@ -25,16 +30,19 @@ namespace Product.Catalog.Infra.Data.Repositories
 
             if (string.IsNullOrWhiteSpace(filter))
             {
-                return Context.Orders.Where(
+                var orders = Context.Orders.Where(
                     x => x.Status.ToString().Contains(filter) &&
                          x.Id.ToString().Contains(filter)
-                ).Skip(skip).Take(take).ToList();
+                ).Skip(skip).Take(take);
+
+                Task.FromResult(orders);
             }
 
-            return Context.Orders.Skip(skip).Take(take).ToList();
+            return Task.FromResult(Context.Orders.Skip(skip).Take(take));
         }
 
-        public void Save(Order entity)
+        /// <inheritdoc/>
+        public Task SaveAsync(Order entity)
         {
             var savedEntityIndex = Context.Orders.FindIndex(x => x.Id == entity.Id);
 
@@ -43,6 +51,8 @@ namespace Product.Catalog.Infra.Data.Repositories
             } else {
                 Context.Orders[savedEntityIndex] = entity;
             }
+
+            return Task.CompletedTask;
         }
     }
 }

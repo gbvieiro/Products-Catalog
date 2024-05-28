@@ -25,12 +25,12 @@ namespace Products.Catalog.Domain.Tests.Services
             _bookRepositoryMock = new Mock<IBookRepository>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
 
-            _bookRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).Returns((Guid id) =>
+            _bookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Guid>())).Returns((Guid id) =>
             {
-                return _books.Where(book => book.Id == id).FirstOrDefault();
+                return Task.FromResult(_books.Where(book => book.Id == id).FirstOrDefault());
             });
 
-            _bookRepositoryMock.Setup(x => x.Save(It.IsAny<Book>())).Callback((Book book) =>
+            _bookRepositoryMock.Setup(x => x.SaveAsync(It.IsAny<Book>())).Returns((Book book) =>
             {
                 var currentBook = _books.Where(b => b.Id == book.Id).FirstOrDefault();
                 if(currentBook != null)
@@ -41,9 +41,11 @@ namespace Products.Catalog.Domain.Tests.Services
                 {
                     _books.Add(book);
                 }
+
+                return Task.CompletedTask;
             });
 
-            _orderRepositoryMock.Setup(x => x.Save(It.IsAny<Order>())).Callback((Order order) =>
+            _orderRepositoryMock.Setup(x => x.SaveAsync(It.IsAny<Order>())).Returns((Order order) =>
             {
                 var currentOrder = _orders.Where(o => o.Id == order.Id).FirstOrDefault();
                 if (currentOrder != null)
@@ -54,6 +56,8 @@ namespace Products.Catalog.Domain.Tests.Services
                 {
                     _orders.Add(order);
                 }
+
+                return Task.CompletedTask;
             });
 
             _orderDomainService = new OrderDomainService(
@@ -63,7 +67,7 @@ namespace Products.Catalog.Domain.Tests.Services
         }
 
         [Fact]
-        public void ProcessOrder_MustUpdateBooksStock()
+        public async Task ProcessOrder_MustUpdateBooksStock()
         {
             var book1ID = Guid.NewGuid();
             var book2ID = Guid.NewGuid();
@@ -88,7 +92,7 @@ namespace Products.Catalog.Domain.Tests.Services
                 orderItems, 0
             );
 
-            _orderDomainService.ProcessNewOrder(order);
+            await _orderDomainService.ProcessNewOrderAsync(order);
 
             // Assert order status
             Xunit.Assert.Equal(OrderStatusEnum.Created, order.Status);
@@ -116,7 +120,7 @@ namespace Products.Catalog.Domain.Tests.Services
         }
 
         [Fact]
-        public void ProcessOrder_WithInvalidQuantity_DomainException()
+        public async Task ProcessOrder_WithInvalidQuantity_DomainException()
         {
             var book1ID = Guid.NewGuid();
             var book2ID = Guid.NewGuid();
@@ -141,14 +145,13 @@ namespace Products.Catalog.Domain.Tests.Services
                 orderItems, 0
             );
 
-            Action action = () => _orderDomainService.ProcessNewOrder(order);
-            action.Should()
-                .Throw<DomainExceptionValidation>()
+            Func<Task> func = async () => await _orderDomainService.ProcessNewOrderAsync(order);
+            await func.Should().ThrowAsync<DomainExceptionValidation>()
                 .WithMessage($"Not enough stock of The Shining, available stock: 5.");
         }
 
         [Fact]
-        public void CancelOrder_MustUpdateBooksStock()
+        public async Task CancelOrder_MustUpdateBooksStock()
         {
             var book1ID = Guid.NewGuid();
             var book2ID = Guid.NewGuid();
@@ -173,7 +176,7 @@ namespace Products.Catalog.Domain.Tests.Services
                 0
             );
 
-            _orderDomainService.CancelOrder(order);
+            await _orderDomainService.CancelOrderAsync(order);
 
             // Assert order status
             Xunit.Assert.Equal(OrderStatusEnum.Canceled, order.Status);

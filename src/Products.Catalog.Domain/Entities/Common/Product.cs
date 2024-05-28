@@ -10,7 +10,7 @@ namespace Products.Catalog.Domain.Entities.Base
         /// <summary>
         /// A Product unique identificator.
         /// </summary>
-        public Guid Id { get; }
+        public Guid Id { get; private set;  }
 
         /// <summary>
         /// Gets or sets the price of the product.

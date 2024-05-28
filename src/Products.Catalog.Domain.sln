@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products.Catalog.Domain.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Product.Catalog.Infra.Data", "Product.Catalog.Infra.Data\Product.Catalog.Infra.Data.csproj", "{A1686184-E792-4EF4-A826-EF63570297FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Product.Catalog.API", "Product.Catalog.API\Product.Catalog.API.csproj", "{149C87F0-6567-466A-9E66-DFFCB808BC0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Product.Catalog.API", "Product.Catalog.API\Product.Catalog.API.csproj", "{149C87F0-6567-466A-9E66-DFFCB808BC0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.Catalog.Application", "Products.Catalog.Application\Products.Catalog.Application.csproj", "{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products.Catalog.Application", "Products.Catalog.Application\Products.Catalog.Application.csproj", "{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Ports", "1 - Ports", "{48B68965-E712-4AAB-81D6-61531CC69414}"
 EndProject
@@ -23,11 +23,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Tests", "5 - Tests", "{831E5D9F-F5FC-4334-AE12-98A8B0EE8546}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Product.Catalog.Infra.IOC", "Product.Catalog.Infra.IOC\Product.Catalog.Infra.IOC.csproj", "{CC63D249-C248-479A-BE46-F8544C880E1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Product.Catalog.Infra.IOC", "Product.Catalog.Infra.IOC\Product.Catalog.Infra.IOC.csproj", "{CC63D249-C248-479A-BE46-F8544C880E1A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.1 - Persistence", "4.1 - Persistence", "{78CCB839-2D65-42F7-9251-5D1C5E9AE677}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.2 - CrossCutting", "4.2 - CrossCutting", "{3062779A-5AFA-4562-88ED-4C8535037E04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.Catalog.Infra.Mapper", "Products.Catalog.Infra.Mapper\Products.Catalog.Infra.Mapper.csproj", "{FEFFB809-B6F0-4577-A61F-C5805E4B14F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{CC63D249-C248-479A-BE46-F8544C880E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC63D249-C248-479A-BE46-F8544C880E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC63D249-C248-479A-BE46-F8544C880E1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEFFB809-B6F0-4577-A61F-C5805E4B14F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEFFB809-B6F0-4577-A61F-C5805E4B14F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEFFB809-B6F0-4577-A61F-C5805E4B14F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEFFB809-B6F0-4577-A61F-C5805E4B14F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{CC63D249-C248-479A-BE46-F8544C880E1A} = {3062779A-5AFA-4562-88ED-4C8535037E04}
 		{78CCB839-2D65-42F7-9251-5D1C5E9AE677} = {E99670C9-2ADB-4C49-997B-B247070B9370}
 		{3062779A-5AFA-4562-88ED-4C8535037E04} = {E99670C9-2ADB-4C49-997B-B247070B9370}
+		{FEFFB809-B6F0-4577-A61F-C5805E4B14F8} = {3062779A-5AFA-4562-88ED-4C8535037E04}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1FBF9811-D030-4F9D-A997-3A5DFFBC1D1F}

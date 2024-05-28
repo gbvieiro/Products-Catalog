@@ -12,43 +12,47 @@ namespace Product.Catalog.Infra.Data.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        public void Delete(Guid id)
+        /// <inheritdoc/>
+        public Task DeleteAsync(Guid id)
         {
             Context.Books = new List<Book>(Context.Books.Where(x => x.Id != id));
+            return Task.CompletedTask;
         }
 
-        public Book? Get(Guid id)
-        {
-            return Context.Books.FirstOrDefault(x => x.Id == id);
-        }
+        /// <inheritdoc/>
+        public Task<Book?> GetAsync(Guid id) =>
+            Task.FromResult(Context.Books.FirstOrDefault(x => x.Id == id));
 
-        public IEnumerable<Book> GetAll(string filter, int skip, int take)
+        /// <inheritdoc/>
+        public Task<IEnumerable<Book>> GetAllAsync(string filter, int skip, int take)
         {
             if (Context.Books == null)
             {
                 throw new Exception("Context is not initialized.");
             }
 
-            if (string.IsNullOrWhiteSpace(filter))
+            if (!string.IsNullOrWhiteSpace(filter))
             {
                 filter = filter.ToLower();
 
-                return Context.Books.Where(
-                    x => x.Genre.ToString().ToLower().Contains(filter) &&
-                         x.Title.ToLower().Contains(filter) &&
-                         x.Author.ToLower().Contains(filter) &&
-                         x.Id.ToString().ToLower().Contains(filter)
-                ).Skip(skip).Take(take).ToList();
+                var books = Context.Books.Where(x =>
+                    x.Genre.ToString().ToLower().Contains(filter) ||
+                    x.Title.ToLower().Contains(filter) ||
+                    x.Author.ToLower().Contains(filter) ||
+                    x.Id.ToString().ToLower().Contains(filter)
+                ).Skip(skip).Take(take);
+
+                return Task.FromResult(books);
             }
 
-            return Context.Books.Skip(skip).Take(take).ToList();
+            return Task.FromResult(Context.Books.Skip(skip).Take(take));
         }
 
-        public void Save(Book entity)
+        /// <inheritdoc/>
+        public Task SaveAsync(Book entity)
         {
             var savedEntityIndex = Context.Books.FindIndex(x => x.Id == entity.Id);
-
-            if (savedEntityIndex != -1)
+            if (savedEntityIndex < 0)
             {
                 Context.Books.Add(entity);
             }
@@ -56,6 +60,8 @@ namespace Product.Catalog.Infra.Data.Repositories
             {
                 Context.Books[savedEntityIndex] = entity;
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -23,63 +23,76 @@ namespace Products.Catalog.Domain.Services.Stock
         /// This method process a new order.
         /// </summary>
         /// <param name="order">A order.</param>
-        public void ProcessNewOrder(Order order)
+        public async Task ProcessNewOrderAsync(Order order)
         {
             order.SetStatus(OrderStatusEnum.Created);
 
             var booksToUpdate = new List<Book>();
 
             // Reserve all items in the stock.
-            order.Items.ForEach(OrderItem => {
-                var book = 
-                    _bookRepository.Get(OrderItem.BookId) ?? 
+            foreach (var OrderItem in order.Items)
+            {
+                var book =
+                    await _bookRepository.GetAsync(OrderItem.BookId) ??
                         throw new DomainExceptionValidation(
                             $"Invalid book in the order: {OrderItem.BookId}"
                         );
 
                 book.ReserveItemsFromStock(OrderItem.Quantity);
-                OrderItem.UpdateAmount(book.Price); 
+                OrderItem.UpdateAmount(book.Price);
 
                 booksToUpdate.Add(book);
-            });
+            }
 
             // Everhing is ok? Save all books stock.
-            booksToUpdate.ForEach(book => { _bookRepository.Save(book); });
+            var tasks = new List<Task>();
+            booksToUpdate.ForEach(book => { 
+                tasks.Add(_bookRepository.SaveAsync(book)); 
+            });
+
+            // Run all saves.
+            await Task.WhenAll(tasks);
 
             order.UpdateTotalAmount();
 
             // Save order with new state.
-            _orderRepository.Save(order);
+            await _orderRepository.SaveAsync(order);
         }
 
         /// <summary>
         /// This method will cancel a order.
         /// </summary>
         /// <param name="order">A order.</param>
-        public void CancelOrder(Order order)
+        public async Task CancelOrderAsync(Order order)
         {
             order.SetStatus(OrderStatusEnum.Canceled);
 
             var booksToUpdate = new List<Book>();
 
             // Return all items to stock.
-            order.Items.ForEach(OrderItem => {
-                var book =
-                    _bookRepository.Get(OrderItem.BookId) ??
-                        throw new DomainExceptionValidation(
-                            $"Invalid book in the order: {OrderItem.BookId}"
-                        );
+            foreach (var OrderItem in order.Items)
+            {
+                var book = await _bookRepository.GetAsync(OrderItem.BookId) ??
+                    throw new DomainExceptionValidation(
+                        $"Invalid book in the order: {OrderItem.BookId}"
+                    );
 
                 book.AddItemsToStock(OrderItem.Quantity);
 
                 booksToUpdate.Add(book);
-            });
+            }
 
-            // Everhing is ok? Save all books stock.
-            booksToUpdate.ForEach(book => { _bookRepository.Save(book); });
+            var tasks = new List<Task>();
+            foreach (var book in booksToUpdate)
+            {
+                tasks.Add(_bookRepository.SaveAsync(book));
+            }
+
+            // Run all saves.
+            await Task.WhenAll(tasks);
 
             // Update order information
-            _orderRepository.Save(order);
+            await _orderRepository.SaveAsync(order);
         }
     }
 }
