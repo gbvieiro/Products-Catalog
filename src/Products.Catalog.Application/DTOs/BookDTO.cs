@@ -2,7 +2,7 @@
 
 namespace Products.Catalog.Application.DTOs
 {
-    public class BookDTO : ProductDTO
+    public class BookDto : ProductDTO
     {
         /// <summary>
         /// Title of the book.

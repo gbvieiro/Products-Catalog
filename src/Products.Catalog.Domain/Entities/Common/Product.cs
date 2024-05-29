@@ -21,26 +21,12 @@ namespace Products.Catalog.Domain.Entities.Base
         public double Price { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the quantity of the product in stock.
-        /// </summary>
-        /// <remarks>
-        /// The stock quantity must be a non-negative integer.
-        /// </remarks>
-        public int StockQuantity { get; protected set; }
-
-        /// <summary>
         /// This method must be called every time a new product is created.
         /// </summary>
         protected void ValidateProductDomain() 
         {
             // Id
-            DomainExceptionValidation.When(
-                string.IsNullOrEmpty(Id.ToString()),
-                "Stock quantity invalid, could not be less than 0."
-            );
-            
-            // Stock Quantity
-            DomainExceptionValidation.When(StockQuantity < 0, "Stock quantity invalid, could not be less than 0.");
+            DomainExceptionValidation.When(Id == Guid.Empty, "ID is required");
 
             // Price
             DomainExceptionValidation.When(Price < 0, "Price invalid, could not be less than 0.");
@@ -52,12 +38,11 @@ namespace Products.Catalog.Domain.Entities.Base
         /// <param name="id">Product unique identification.</param>
         /// <param name="price">Product price.</param>
         /// <param name="stockQuantity">Current stock quantity.</param>
-        protected Product(Guid id, double price, int stockQuantity)
+        protected Product(Guid id, double price)
         {
             Id = id;
             Price = price;
-            StockQuantity = stockQuantity;
-
+            
             ValidateProductDomain();
         }
 

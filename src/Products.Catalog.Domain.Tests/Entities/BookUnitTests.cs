@@ -12,7 +12,7 @@ namespace Products.Catalog.Domain.Tests.Entities
         {
             Action action = () =>
             {
-                new Book(Guid.NewGuid(), 22.50, 3, "The Shining", "Stephen King", BookGenre.Horror);
+                new Book(Guid.NewGuid(), 22.50, "The Shining", "Stephen King", BookGenre.Horror);
             };
 
             action.Should().NotThrow<DomainExceptionValidation>();
@@ -21,7 +21,7 @@ namespace Products.Catalog.Domain.Tests.Entities
         [Fact]
         public void CreateBook_NegativePrice_DomainException()
         {
-            Action action = () => new Book(Guid.NewGuid(), -10, 3, "The Shining", "Stephen King", BookGenre.Horror);
+            Action action = () => new Book(Guid.NewGuid(), -10, "The Shining", "Stephen King", BookGenre.Horror);
             action.Should().Throw<DomainExceptionValidation>();
         }
     }

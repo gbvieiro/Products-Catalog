@@ -2,6 +2,8 @@
 using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.RepositoriesInterfaces;
 using Products.Catalog.Domain.Validations;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Products.Catalog.Domain.Services.Stock
 {
@@ -9,14 +11,17 @@ namespace Products.Catalog.Domain.Services.Stock
     {
         private IBookRepository _bookRepository;
         private IOrderRepository _orderRepository;
-
+        private IStocksRepository _stockRepository;
+        
         public OrderDomainService(
             IBookRepository bookRepository,
-            IOrderRepository orderRepository
+            IOrderRepository orderRepository,
+            IStocksRepository stockRepository
         )
         {
             _bookRepository = bookRepository;
             _orderRepository = orderRepository;
+            _stockRepository = stockRepository;
         }
 
         /// <summary>
@@ -27,36 +32,95 @@ namespace Products.Catalog.Domain.Services.Stock
         {
             order.SetStatus(OrderStatusEnum.Created);
 
-            var booksToUpdate = new List<Book>();
+            // Return all items to stock.
+            var reserveBooksTasks = new List<Task>();
 
-            // Reserve all items in the stock.
-            foreach (var OrderItem in order.Items)
+            var verificationResult = await VerifyStocksForOrdemItems(order.Items);
+            if(verificationResult.Length > 0)
             {
-                var book =
-                    await _bookRepository.GetAsync(OrderItem.BookId) ??
-                        throw new DomainExceptionValidation(
-                            $"Invalid book in the order: {OrderItem.BookId}"
-                        );
-
-                book.ReserveItemsFromStock(OrderItem.Quantity);
-                OrderItem.UpdateAmount(book.Price);
-
-                booksToUpdate.Add(book);
+                throw new DomainExceptionValidation(string.Join(".", verificationResult));
             }
 
-            // Everhing is ok? Save all books stock.
-            var tasks = new List<Task>();
-            booksToUpdate.ForEach(book => { 
-                tasks.Add(_bookRepository.SaveAsync(book)); 
-            });
+            // Reserve all items in the stock.
+            foreach (var orderItem in order.Items)
+            {
+                // Create a task to run in parallel.
+                reserveBooksTasks.Add(ReserveBookFromStock(orderItem.BookId, orderItem.Quantity));
+
+                // Update order amount.
+                var price = await _bookRepository.GetBookPrice(orderItem.BookId);
+                orderItem.UpdateAmount(price);
+            }
 
             // Run all saves.
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(reserveBooksTasks);
 
             order.UpdateTotalAmount();
 
             // Save order with new state.
             await _orderRepository.SaveAsync(order);
+        }
+
+        /// <summary>
+        /// This verification avoid a order to have more items than what we have in stock.
+        /// </summary>
+        /// <param name="orderItem">A order item.</param>
+        /// <returns>A list of problems with stock or a empty list when ok.</returns>
+        private async Task<string[]> VerifyStocksForOrdemItems(List<OrderItem> orderItem)
+        {
+            var responses = new List<string>();
+            foreach (var item in orderItem)
+            {
+                var stock = await _stockRepository.GetByBookId(item.BookId);
+
+                if (stock == null)
+                {
+                    responses.Add($"No Stock found for book: {item.BookId}") ;
+                }
+                else if (stock.Quantity < item.Quantity)
+                {
+                    responses.Add($"No Enough Items in Stock for book:{item.BookId}");
+                }
+            }
+
+            return responses.ToArray();
+        }
+
+        /// <summary>
+        /// Add books to the stock.
+        /// </summary>
+        /// <param name="bookId">Book id.</param>
+        /// <param name="quantity">Quantity id.</param>
+        /// <returns>A task.</returns>
+        /// <exception cref="DomainExceptionValidation">When there is no stock register.</exception>
+        private async Task AddBookToStock(Guid bookId, int quantity)
+        {
+            var stock = await _stockRepository.GetByBookId(bookId);
+            if(stock == null)
+            {
+                throw new DomainExceptionValidation($"No stock found for book:{bookId}");
+            }
+
+            stock.AddBooksToStock(quantity);
+        }
+
+        /// <summary>
+        /// Reserve books from the stock.
+        /// </summary>
+        /// <param name="bookId">Book id.</param>
+        /// <param name="quantity">Quantity id.</param>
+        /// <returns>A task.</returns>
+        private async Task ReserveBookFromStock(Guid bookId, int quantity)
+        {
+            var stock = await _stockRepository.GetByBookId(bookId);
+            if (stock == null)
+            {
+                throw new DomainExceptionValidation($"No stock found for book:{bookId}");
+            }
+
+            stock.ReserveItems(quantity);
+
+            await _stockRepository.SaveAsync(stock);
         }
 
         /// <summary>
@@ -67,29 +131,16 @@ namespace Products.Catalog.Domain.Services.Stock
         {
             order.SetStatus(OrderStatusEnum.Canceled);
 
-            var booksToUpdate = new List<Book>();
-
             // Return all items to stock.
-            foreach (var OrderItem in order.Items)
+            var addBooksTasks = new List<Task>();
+            foreach (var orderItem in order.Items)
             {
-                var book = await _bookRepository.GetAsync(OrderItem.BookId) ??
-                    throw new DomainExceptionValidation(
-                        $"Invalid book in the order: {OrderItem.BookId}"
-                    );
-
-                book.AddItemsToStock(OrderItem.Quantity);
-
-                booksToUpdate.Add(book);
+                // Create a task to run in parallel.
+                addBooksTasks.Add(AddBookToStock(orderItem.BookId, orderItem.Quantity));
             }
 
-            var tasks = new List<Task>();
-            foreach (var book in booksToUpdate)
-            {
-                tasks.Add(_bookRepository.SaveAsync(book));
-            }
-
-            // Run all saves.
-            await Task.WhenAll(tasks);
+            // Run in parallel
+            await Task.WhenAll(addBooksTasks);
 
             // Update order information
             await _orderRepository.SaveAsync(order);

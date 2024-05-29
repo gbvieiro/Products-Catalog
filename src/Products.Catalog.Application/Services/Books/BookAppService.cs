@@ -28,19 +28,19 @@ namespace Products.Catalog.Application.Services.Books
         public Task DeleteAsync(Guid id) => _bookRepository.DeleteAsync(id);
 
         /// <inheritdoc/>
-        public async Task<List<BookDTO>> GetAllAsync(string filtertext, int skip, int take)
+        public async Task<List<BookDto>> GetAllAsync(string filtertext, int skip, int take)
         {
             var books = await _bookRepository.GetAllAsync(filtertext, skip, take);
-            return _mapper.Map<List<BookDTO>>(books.ToList());
+            return _mapper.Map<List<BookDto>>(books.ToList());
         }
 
-        public async Task<BookDTO?> GetAsync(Guid id)
+        public async Task<BookDto?> GetAsync(Guid id)
         {
             var book = await _bookRepository.GetAsync(id);
-            return book != null ? _mapper.Map<BookDTO>(book) : default;
+            return book != null ? _mapper.Map<BookDto>(book) : default;
         }
 
-        public Task SaveAsync(BookDTO bookDto)
+        public Task SaveAsync(BookDto bookDto)
         {
             ArgumentNullException.ThrowIfNull(bookDto);
             bookDto.GenerateId();

@@ -28,14 +28,10 @@ namespace Products.Catalog.Domain.Entities.Books
         /// </summary>
         /// <param name="id"></param>
         /// <param name="price"></param>
-        /// <param name="stockQuantity"></param>
         /// <param name="title"></param>
         /// <param name="author"></param>
         /// <param name="genre"></param>
-        public Book(
-            Guid id, double price, int stockQuantity,
-            string title, string author, BookGenre genre
-            ) : base(id, price, stockQuantity)
+        public Book(Guid id, double price, string title, string author, BookGenre genre) : base(id, price)
         {
             Title = title;
             Author = author;
@@ -59,23 +55,6 @@ namespace Products.Catalog.Domain.Entities.Books
             DomainExceptionValidation.When(Author.Length > 30, "Invalid author name, too long, maximum 3 characters.");
         }
         
-        /// <summary>
-        /// Reserve items of this item from stock.
-        /// </summary>
-        /// <param name="numberOfItems">Number of items to get.</param>
-        public void ReserveItemsFromStock(int numberOfItems)
-        {
-            DomainExceptionValidation.When(
-                numberOfItems > StockQuantity,
-                $"Not enough stock of {Title}, available stock: {StockQuantity}."
-            );
-
-            StockQuantity -= numberOfItems;
-        }
-
-        public void AddItemsToStock(int numberOfItems)
-        {
-            StockQuantity += numberOfItems;
-        }
+        
     }
 }

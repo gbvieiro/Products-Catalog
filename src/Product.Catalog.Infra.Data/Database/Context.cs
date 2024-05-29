@@ -1,5 +1,6 @@
 ﻿using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
+using Products.Catalog.Domain.Entities.Stocks;
 
 namespace Product.Catalog.Infra.Data.Database
 {
@@ -26,5 +27,10 @@ namespace Product.Catalog.Infra.Data.Database
         /// Storage orders in memory.
         /// </summary>
         public static List<Order> Orders { get; set; }
+
+        /// <summary>
+        /// Storage stocks in memory.
+        /// </summary>
+        public static List<Stock> Stocks { get; set; }
     }
 }

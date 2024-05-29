@@ -4,6 +4,9 @@ using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {
+    /// <summary>
+    /// A order repository definition.
+    /// </summary>
     public class OrderRepository : IOrderRepository
     {
         /// <inheritdoc/>

@@ -2,6 +2,7 @@
 using Moq;
 using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
+using Products.Catalog.Domain.Entities.Stocks;
 using Products.Catalog.Domain.RepositoriesInterfaces;
 using Products.Catalog.Domain.Services.Stock;
 using Products.Catalog.Domain.Validations;
@@ -14,16 +15,20 @@ namespace Products.Catalog.Domain.Tests.Services
         private IOrderDomainService _orderDomainService;
         private Mock<IBookRepository> _bookRepositoryMock;
         private Mock<IOrderRepository> _orderRepositoryMock;
+        private Mock<IStocksRepository> _stocksRepository;
         private List<Book> _books { get; set; }
         private List<Order> _orders { get; set; }
+        private List<Stock> _stocks { get; set; }
 
         public OrderDomainServiceTests() 
         {
-            _books = new List<Book>();
-            _orders = new List<Order>();
+            _books = [];
+            _orders = [];
+            _stocks = [];
 
             _bookRepositoryMock = new Mock<IBookRepository>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
+            _stocksRepository = new Mock<IStocksRepository>();
 
             _bookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Guid>())).Returns((Guid id) =>
             {
@@ -45,6 +50,11 @@ namespace Products.Catalog.Domain.Tests.Services
                 return Task.CompletedTask;
             });
 
+            _bookRepositoryMock.Setup(x => x.GetBookPrice(It.IsAny<Guid>())).Returns((Guid id) =>
+            {
+                return Task.FromResult(_books.Where(book => book.Id == id).First().Price);
+            });
+
             _orderRepositoryMock.Setup(x => x.SaveAsync(It.IsAny<Order>())).Returns((Order order) =>
             {
                 var currentOrder = _orders.Where(o => o.Id == order.Id).FirstOrDefault();
@@ -60,9 +70,30 @@ namespace Products.Catalog.Domain.Tests.Services
                 return Task.CompletedTask;
             });
 
+            _stocksRepository.Setup(x => x.SaveAsync(It.IsAny<Stock>())).Returns((Stock stock) =>
+            {
+                var currentStock = _stocks.Where(o => o.Id == stock.Id).FirstOrDefault();
+                if (currentStock != null)
+                {
+                    currentStock = stock;
+                }
+                else
+                {
+                    _stocks.Add(stock);
+                }
+
+                return Task.CompletedTask;
+            });
+
+            _stocksRepository.Setup(x => x.GetByBookId(It.IsAny<Guid>())).Returns((Guid id) =>
+            {
+                return Task.FromResult(_stocks.Where(stock => stock.BookId == id).FirstOrDefault());
+            });
+
             _orderDomainService = new OrderDomainService(
                 _bookRepositoryMock.Object,
-                _orderRepositoryMock.Object
+                _orderRepositoryMock.Object,
+                _stocksRepository.Object
             );
         }
 
@@ -74,23 +105,25 @@ namespace Products.Catalog.Domain.Tests.Services
 
             _books =
             [
-                new Book(book1ID, 22.50, 5, "The Shining", "Stephen King", BookGenre.Horror),
-                new Book(book2ID, 17.00, 25, "Pet Semetary", "Stephen King", BookGenre.Horror),
+                new Book(book1ID, 22.50, "The Shining", "Stephen King", BookGenre.Horror),
+                new Book(book2ID, 17.00, "Pet Semetary", "Stephen King", BookGenre.Horror),
+            ];
+
+            _stocks = [
+                new Stock(Guid.NewGuid(), 10, book1ID),
+                new Stock(Guid.NewGuid(), 15, book2ID),
             ];
 
             var orderItems = new List<OrderItem>
             {
-                new(_books[0].Id, 2, 0),
-                new(_books[1].Id, 10, 0)
+                new(book1ID, 2, 0),
+                new(book2ID, 10, 0)
             };
 
             var orderId = Guid.NewGuid();
             var orderDate = DateTime.Now;
 
-            var order = new Order(
-                orderId, orderDate, OrderStatusEnum.Created,
-                orderItems, 0
-            );
+            var order = new Order(orderId, orderDate, OrderStatusEnum.Created, orderItems, 0);
 
             await _orderDomainService.ProcessNewOrderAsync(order);
 
@@ -102,21 +135,9 @@ namespace Products.Catalog.Domain.Tests.Services
             Xunit.Assert.Equal(170, order.Items[1].Amount);
             Xunit.Assert.Equal(215, order.TotalAmount);
 
-            // Assert book 1
-            Xunit.Assert.Equal(book1ID, _books[0].Id);
-            Xunit.Assert.Equal("The Shining", _books[0].Title);
-            Xunit.Assert.Equal("Stephen King", _books[0].Author);
-            Xunit.Assert.Equal(BookGenre.Horror, _books[0].Genre);
-            Xunit.Assert.Equal(22.50, _books[0].Price);
-            Xunit.Assert.Equal(3, _books[0].StockQuantity);
-
-            // Assert book 2
-            Xunit.Assert.Equal(book2ID, _books[1].Id);
-            Xunit.Assert.Equal("Pet Semetary", _books[1].Title);
-            Xunit.Assert.Equal("Stephen King", _books[1].Author);
-            Xunit.Assert.Equal(BookGenre.Horror, _books[1].Genre);
-            Xunit.Assert.Equal(17.00, _books[1].Price);
-            Xunit.Assert.Equal(15, _books[1].StockQuantity);
+            // Assert stocks
+            Xunit.Assert.Equal(8, _stocks[0].Quantity);
+            Xunit.Assert.Equal(5, _stocks[1].Quantity);
         }
 
         [Fact]
@@ -127,27 +148,28 @@ namespace Products.Catalog.Domain.Tests.Services
 
             _books =
             [
-                new Book(book1ID, 22.50, 5, "The Shining", "Stephen King", BookGenre.Horror),
-                new Book(book2ID, 17.00, 25, "Pet Semetary", "Stephen King", BookGenre.Horror),
+                new Book(book1ID, 22.50, "The Shining", "Stephen King", BookGenre.Horror),
+                new Book(book2ID, 17.00, "Pet Semetary", "Stephen King", BookGenre.Horror),
             ];
 
             var orderItems = new List<OrderItem>
             {
-                new(_books[0].Id, 6, 0),
-                new(_books[1].Id, 10, 0)
+                new(book1ID, 6, 0),
+                new(book2ID, 10, 0)
             };
+
+            _stocks = [
+                new Stock(Guid.NewGuid(), 5, book1ID)
+            ];
 
             var orderId = Guid.NewGuid();
             var orderDate = DateTime.Now;
 
-            var order = new Order(
-                orderId, orderDate, OrderStatusEnum.Created,
-                orderItems, 0
-            );
+            var order = new Order(orderId, orderDate, OrderStatusEnum.Created, orderItems, 0);
 
             Func<Task> func = async () => await _orderDomainService.ProcessNewOrderAsync(order);
             await func.Should().ThrowAsync<DomainExceptionValidation>()
-                .WithMessage($"Not enough stock of The Shining, available stock: 5.");
+                .WithMessage($"No Enough Items in Stock for book:{book1ID}.No Stock found for book: {book2ID}");
         }
 
         [Fact]
@@ -158,44 +180,32 @@ namespace Products.Catalog.Domain.Tests.Services
 
             _books =
             [
-                new Book(book1ID, 22.50, 5, "The Shining", "Stephen King", BookGenre.Horror),
-                new Book(book2ID, 17.00, 25, "Pet Semetary", "Stephen King", BookGenre.Horror),
+                new Book(book1ID, 22.50, "The Shining", "Stephen King", BookGenre.Horror),
+                new Book(book2ID, 17.00, "Pet Semetary", "Stephen King", BookGenre.Horror),
             ];
 
             var orderItems = new List<OrderItem>
             {
-                new(_books[0].Id, 2, 0),
-                new(_books[1].Id, 10, 0)
+                new(book1ID, 2, 0),
+                new(book2ID, 25, 0)
             };
 
-            var order = new Order(
-                Guid.NewGuid(),
-                DateTime.Now,
-                OrderStatusEnum.Created,
-                orderItems,
-                0
-            );
+            _stocks = [
+                new Stock(Guid.NewGuid(), 8, book1ID),
+                new Stock(Guid.NewGuid(), 5, book2ID),
+            ];
+
+            var order = 
+                new Order(Guid.NewGuid(), DateTime.Now, OrderStatusEnum.Created, orderItems, 0);
 
             await _orderDomainService.CancelOrderAsync(order);
 
             // Assert order status
             Xunit.Assert.Equal(OrderStatusEnum.Canceled, order.Status);
 
-            // Assert book 1
-            Xunit.Assert.Equal(book1ID, _books[0].Id);
-            Xunit.Assert.Equal("The Shining", _books[0].Title);
-            Xunit.Assert.Equal("Stephen King", _books[0].Author);
-            Xunit.Assert.Equal(BookGenre.Horror, _books[0].Genre);
-            Xunit.Assert.Equal(22.50, _books[0].Price);
-            Xunit.Assert.Equal(7, _books[0].StockQuantity);
-
-            // Assert book 2
-            Xunit.Assert.Equal(book2ID, _books[1].Id);
-            Xunit.Assert.Equal("Pet Semetary", _books[1].Title);
-            Xunit.Assert.Equal("Stephen King", _books[1].Author);
-            Xunit.Assert.Equal(BookGenre.Horror, _books[1].Genre);
-            Xunit.Assert.Equal(17.00, _books[1].Price);
-            Xunit.Assert.Equal(35, _books[1].StockQuantity);
+            // Assert stocks
+            Xunit.Assert.Equal(10, _stocks[0].Quantity);
+            Xunit.Assert.Equal(30, _stocks[1].Quantity);
         }
     }
 }

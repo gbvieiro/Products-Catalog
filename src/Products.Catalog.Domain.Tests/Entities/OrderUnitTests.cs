@@ -1,10 +1,7 @@
 ﻿using FluentAssertions;
-using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.Validations;
-using System;
 using Xunit;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Products.Catalog.Domain.Tests.Entities
 {

@@ -1,15 +1,12 @@
 ﻿using Product.Catalog.Infra.Data.Database;
 using Products.Catalog.Domain.Entities.Books;
-using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.RepositoriesInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {
+    /// <summary>
+    /// A book repository definition.
+    /// </summary>
     public class BookRepository : IBookRepository
     {
         /// <inheritdoc/>
@@ -62,6 +59,23 @@ namespace Product.Catalog.Infra.Data.Repositories
             }
 
             return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task<double> GetBookPrice(Guid id)
+        {
+            if (Context.Books == null)
+            {
+                throw new Exception("Context is not initialized.");
+            }
+
+            var index = Context.Books.FindIndex(x => x.Id == id);
+
+            if (index < 0) {
+                Task.FromResult(double.NaN);
+            }
+
+            return Task.FromResult(Context.Books[index].Price);
         }
     }
 }

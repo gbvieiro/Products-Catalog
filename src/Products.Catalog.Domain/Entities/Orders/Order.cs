@@ -64,10 +64,7 @@ namespace Products.Catalog.Domain.Entities.Orders
         private void ValidateBookDomain()
         {
             // Id
-            DomainExceptionValidation.When(
-                string.IsNullOrEmpty(Id.ToString()),
-                "Stock quantity invalid, could not be less than 0."
-            );
+            DomainExceptionValidation.When(Id == Guid.Empty, "ID is required");
 
             // Items
             DomainExceptionValidation.When(Items == null || !Items.Any(), "A order must have order items.");
