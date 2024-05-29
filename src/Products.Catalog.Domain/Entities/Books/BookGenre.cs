@@ -1,5 +1,8 @@
 ﻿namespace Products.Catalog.Domain.Entities.Books
 {
+    /// <summary>
+    /// Define posible book genres.
+    /// </summary>
     public enum BookGenre
     {
         /// <summary>

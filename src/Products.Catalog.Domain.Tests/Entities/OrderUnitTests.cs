@@ -15,7 +15,7 @@ namespace Products.Catalog.Domain.Tests.Entities
                 var item = new OrderItem(Guid.NewGuid(), 10, 50);
                 
                 new Order(
-                    Guid.NewGuid(), DateTime.Now,
+                    Guid.NewGuid(), Guid.NewGuid(), DateTime.Now,
                     OrderStatusEnum.Created, [item], 50
                 );
             };
@@ -46,7 +46,7 @@ namespace Products.Catalog.Domain.Tests.Entities
             Action action = () =>
             {
                 var order = new Order(
-                    Guid.NewGuid(), DateTime.Now,
+                    Guid.NewGuid(), Guid.NewGuid(), DateTime.Now,
                     OrderStatusEnum.Created, [], 50
                 );
             };

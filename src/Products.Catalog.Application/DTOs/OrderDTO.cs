@@ -2,8 +2,16 @@
 
 namespace Products.Catalog.Application.DTOs
 {
+    /// <summary>
+    /// Represents a order structure.
+    /// </summary>
     public class OrderDto : EntityDTO
     {
+        /// <summary>
+        /// A customer ID.
+        /// </summary>
+        public Guid CustomerId { get; set; }
+
         /// <summary>
         /// A creation data of this order.
         /// </summary>

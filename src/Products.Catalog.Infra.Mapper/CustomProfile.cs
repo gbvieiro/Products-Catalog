@@ -4,6 +4,7 @@ using Products.Catalog.Application.DTOs.Common;
 using Products.Catalog.Domain.Entities.Base;
 using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
+using Products.Catalog.Domain.Entities.Stocks;
 
 namespace Products.Catalog.Infra.Mapper
 {
@@ -15,6 +16,7 @@ namespace Products.Catalog.Infra.Mapper
             CreateMap<BookDto, Book>().ReverseMap();
             CreateMap<OrderDto, Order>().ReverseMap();
             CreateMap<OrderItemDto, OrderItem>().ReverseMap();
+            CreateMap<StockDto, Stock>().ReverseMap();
         }
     }
 }

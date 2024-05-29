@@ -2,7 +2,10 @@
 
 namespace Products.Catalog.Application.DTOs
 {
-    public  class StockDto : EntityDTO
+    /// <summary>
+    /// Represents a stock structure.
+    /// </summary>
+    public class StockDto : EntityDTO
     {
         /// <summary>
         /// A stock unique identificator.

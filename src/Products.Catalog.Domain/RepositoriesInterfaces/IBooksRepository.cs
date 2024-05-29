@@ -3,7 +3,10 @@ using Products.Catalog.Domain.RepositoriesInterfaces.Common;
 
 namespace Products.Catalog.Domain.RepositoriesInterfaces
 {
-    public interface IBookRepository : IRepository<Book, Guid> 
+    /// <summary>
+    /// A interface for a books repository.
+    /// </summary>
+    public interface IBooksRepository : IRepository<Book, Guid> 
     {
         /// <summary>
         /// Get a book price by id.

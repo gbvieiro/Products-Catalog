@@ -2,7 +2,11 @@
 
 namespace Products.Catalog.Application.Services.Common
 {
-    public interface IAppService<DtoType> where DtoType : EntityDTO
+    /// <summary>
+    /// Common interfaces for a CRUD aplication service.
+    /// </summary>
+    /// <typeparam name="DtoType">The model dto type.</typeparam>
+    public interface ICrudAppService<DtoType> where DtoType : EntityDTO
     {
         /// <summary>
         /// Get a entity by id.
@@ -24,7 +28,7 @@ namespace Products.Catalog.Application.Services.Common
         /// Save a entity.
         /// </summary>
         /// <param name="book">A entity dto.</param>
-        Task SaveAsync(DtoType book);
+        Task SaveAsync(DtoType dto);
 
         /// <summary>
         /// Delete a entity.

@@ -6,21 +6,16 @@ using Products.Catalog.Application.Services.Books;
 namespace Product.Catalog.API.Controllers
 {
     /// <summary>
-    /// Define API methods for BOOK
+    /// Define API methods for Book.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class BookController : ControllerBase
+    public class BooksController(IBooksAppService booksAppSerice) : ControllerBase
     {
         /// <summary>
         /// A book app service interface.
         /// </summary>
-        private readonly IBookAppService _bookAppSerice;
-
-        public BookController(IBookAppService bookAppSerice)
-        {
-            _bookAppSerice = bookAppSerice;
-        }
+        private readonly IBooksAppService _booksAppSerice = booksAppSerice;
 
         /// <summary>
         /// Get book.
@@ -30,8 +25,8 @@ namespace Product.Catalog.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
-            var bookDto = await _bookAppSerice.GetAsync(id);
-            return Ok(bookDto);
+            var dto = await _booksAppSerice.GetAsync(id);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -42,7 +37,7 @@ namespace Product.Catalog.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
-            await _bookAppSerice.DeleteAsync(id);
+            await _booksAppSerice.DeleteAsync(id);
 
             return NoContent();
         }
@@ -60,7 +55,7 @@ namespace Product.Catalog.API.Controllers
                 return BadRequest();
             }
 
-            await _bookAppSerice.SaveAsync(bookDTO);
+            await _booksAppSerice.SaveAsync(bookDTO);
 
             return Ok(bookDTO.Id);
         }
@@ -78,7 +73,7 @@ namespace Product.Catalog.API.Controllers
                 return BadRequest();
             }
 
-            var booksDtos = await _bookAppSerice.GetAllAsync(
+            var booksDtos = await _booksAppSerice.GetAllAsync(
                 filter.Text ?? string.Empty, filter.Skip, filter.Take
             );
 

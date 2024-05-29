@@ -9,28 +9,28 @@ namespace Products.Catalog.Domain.Entities.Books
     public class Book : Product
     {
         /// <summary>
-        /// Title of the book.
+        /// Title of a book.
         /// </summary>
         public string Title { get; private set; }
 
         /// <summary>
-        /// Author of the book.
+        /// An author name.
         /// </summary>
         public string Author { get; private set; }
 
         /// <summary>
-        /// The genre of the book.
+        /// A genre.
         /// </summary>
         public BookGenre Genre { get; private set; }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="price"></param>
-        /// <param name="title"></param>
-        /// <param name="author"></param>
-        /// <param name="genre"></param>
+        /// <param name="id">A Product unique identificator.</param>
+        /// <param name="price">A product price.</param>
+        /// <param name="title">Title of a book.</param>
+        /// <param name="author">An author name.</param>
+        /// <param name="genre">A genre.</param>
         public Book(Guid id, double price, string title, string author, BookGenre genre) : base(id, price)
         {
             Title = title;
@@ -54,7 +54,5 @@ namespace Products.Catalog.Domain.Entities.Books
             DomainExceptionValidation.When(Author.Length < 3, "Invalid author name, too short, minimum 3 characters.");
             DomainExceptionValidation.When(Author.Length > 30, "Invalid author name, too long, maximum 3 characters.");
         }
-        
-        
     }
 }

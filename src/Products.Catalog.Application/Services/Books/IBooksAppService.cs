@@ -4,9 +4,9 @@ using Products.Catalog.Application.Services.Common;
 namespace Products.Catalog.Application.Services.Books
 {
     /// <summary>
-    /// Provide access to book domain user cases.
+    /// Provide a interface for books domain user cases.
     /// </summary>
-    public interface IBookAppService : IAppService<BookDto>
+    public interface IBooksAppService : ICrudAppService<BookDto>
     {
         
     }

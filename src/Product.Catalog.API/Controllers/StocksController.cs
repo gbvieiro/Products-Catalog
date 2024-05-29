@@ -1,66 +1,68 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.DTOs.Filters;
-using Products.Catalog.Application.Services.Orders;
+using Products.Catalog.Application.Services.Stocks;
 
 namespace Product.Catalog.API.Controllers
 {
     /// <summary>
-    /// Define API methods for orders.
+    /// Define API methods for Stock.
     /// </summary>
+    /// <param name="stocksAppService">A stocks app service instance.</param>
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController(IOrdersAppService ordersAppService) : ControllerBase
+    public class StocksController(IStocksAppService stocksAppService) : ControllerBase
     {
         /// <summary>
-        /// A orders app service interface.
+        /// A book app service interface.
         /// </summary>
-        private readonly IOrdersAppService _ordersAppService = ordersAppService;
+        private readonly IStocksAppService _stocksAppService = stocksAppService;
 
         /// <summary>
-        /// Get order.
+        /// Get stock.
         /// </summary>
-        /// <param name="id">A order id.</param>
+        /// <param name="id">A stock id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
-            var dto = await _ordersAppService.GetAsync(id);
-            return Ok(dto);
+            var stockDto = await _stocksAppService.GetAsync(id);
+            return Ok(stockDto);
         }
 
         /// <summary>
-        /// Delete order.
+        /// Delete stock.
         /// </summary>
-        /// <param name="id">A order id.</param>
+        /// <param name="id">A stock id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
-            await _ordersAppService.DeleteAsync(id);
+            await _stocksAppService.DeleteAsync(id);
+
             return NoContent();
         }
 
         /// <summary>
-        /// Save order.
+        /// Save stock.
         /// </summary>
-        /// <param name="orderDto">A order dto.</param>
+        /// <param name="stockDto">A stock dto.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
-        public async Task<IActionResult> SaveAsync([FromBody] OrderDto orderDto)
+        public async Task<IActionResult> SaveAsync([FromBody] StockDto stockDto)
         {
-            if (orderDto == null)
+            if (stockDto == null)
             {
                 return BadRequest();
             }
 
-            await _ordersAppService.SaveAsync(orderDto);
+            await _stocksAppService.SaveAsync(stockDto);
 
-            return Ok(orderDto.Id);
+            return Ok(stockDto.Id);
         }
 
         /// <summary>
-        /// Get all orders.
+        /// Get all stocks.
         /// </summary>
         /// <param name="filter">Filter parameters.</param>
         /// <returns>A http response with the status code.</returns>
@@ -72,11 +74,11 @@ namespace Product.Catalog.API.Controllers
                 return BadRequest();
             }
 
-            var booksDtos = await _ordersAppService.GetAllAsync(
+            var dtos = await _stocksAppService.GetAllAsync(
                 filter.Text ?? string.Empty, filter.Skip, filter.Take
             );
 
-            return Ok(booksDtos);
+            return Ok(dtos);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Product.Catalog.Infra.Data.Repositories;
 using Products.Catalog.Application.Services.Books;
 using Products.Catalog.Application.Services.Orders;
+using Products.Catalog.Application.Services.Stocks;
 using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.IOC
@@ -19,12 +20,14 @@ namespace Product.Catalog.Infra.IOC
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             // Application services.
-            services.AddScoped<IBookAppService, BookAppService>();
+            services.AddScoped<IBooksAppService, BooksAppService>();
             services.AddScoped<IOrdersAppService, OrdersAppService>();
+            services.AddScoped<IStocksAppService, StocksAppService>();
 
             // Repositories.
-            services.AddScoped<IBookRepository, BookRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IBooksRepository, BooksRepository>();
+            services.AddScoped<IOrderRepository, OrdersRepository>();
+            services.AddScoped<IStocksRepository, StoksRepository>();
 
             return services;
         }

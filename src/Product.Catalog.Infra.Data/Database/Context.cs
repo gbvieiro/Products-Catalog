@@ -16,6 +16,7 @@ namespace Product.Catalog.Infra.Data.Database
         {
             Books = [];
             Orders = [];
+            Stocks = [];
         }
 
         /// <summary>

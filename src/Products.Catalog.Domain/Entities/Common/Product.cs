@@ -3,7 +3,7 @@
 namespace Products.Catalog.Domain.Entities.Base
 {
     /// <summary>
-    /// Represents a car in the product catalog.
+    /// Represents a product in the product catalog.
     /// </summary>
     public abstract class Product : IEntity<Guid>
     {
@@ -12,11 +12,8 @@ namespace Products.Catalog.Domain.Entities.Base
         /// </summary>
         public Guid Id { get; private set;  }
 
-        /// <summary>
-        /// Gets or sets the price of the product.
-        /// </summary>
         /// <remarks>
-        /// The price should be a positive value.
+        /// A product price.
         /// </remarks>
         public double Price { get; protected set; }
 

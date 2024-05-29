@@ -8,16 +8,12 @@ namespace Products.Catalog.Application.Services.Books
     /// <summary>
     /// Provide book domain user cases.
     /// </summary>
-    /// <remarks>
-    /// Constructor.
-    /// </remarks>
-    /// <param name="bookRepository">A book repository instace.</param>
-    public class BookAppService(IBookRepository bookRepository, IMapper mapper) : IBookAppService
+    public class BooksAppService(IBooksRepository bookRepository, IMapper mapper) : IBooksAppService
     {
         /// <summary>
         /// A book repository interface.
         /// </summary>
-        private readonly IBookRepository _bookRepository = bookRepository;
+        private readonly IBooksRepository _bookRepository = bookRepository;
 
         /// <summary>
         /// A mapper service.
@@ -34,12 +30,14 @@ namespace Products.Catalog.Application.Services.Books
             return _mapper.Map<List<BookDto>>(books.ToList());
         }
 
+        /// <inheritdoc/>
         public async Task<BookDto?> GetAsync(Guid id)
         {
             var book = await _bookRepository.GetAsync(id);
             return book != null ? _mapper.Map<BookDto>(book) : default;
         }
 
+        /// <inheritdoc/>
         public Task SaveAsync(BookDto bookDto)
         {
             ArgumentNullException.ThrowIfNull(bookDto);

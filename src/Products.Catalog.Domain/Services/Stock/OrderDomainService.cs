@@ -9,12 +9,12 @@ namespace Products.Catalog.Domain.Services.Stock
 {
     public class OrderDomainService : IOrderDomainService
     {
-        private IBookRepository _bookRepository;
+        private IBooksRepository _bookRepository;
         private IOrderRepository _orderRepository;
         private IStocksRepository _stockRepository;
         
         public OrderDomainService(
-            IBookRepository bookRepository,
+            IBooksRepository bookRepository,
             IOrderRepository orderRepository,
             IStocksRepository stockRepository
         )
@@ -24,10 +24,7 @@ namespace Products.Catalog.Domain.Services.Stock
             _stockRepository = stockRepository;
         }
 
-        /// <summary>
-        /// This method process a new order.
-        /// </summary>
-        /// <param name="order">A order.</param>
+        /// <inheritdoc/>
         public async Task ProcessNewOrderAsync(Order order)
         {
             order.SetStatus(OrderStatusEnum.Created);
@@ -123,10 +120,7 @@ namespace Products.Catalog.Domain.Services.Stock
             await _stockRepository.SaveAsync(stock);
         }
 
-        /// <summary>
-        /// This method will cancel a order.
-        /// </summary>
-        /// <param name="order">A order.</param>
+        /// <inheritdoc/>
         public async Task CancelOrderAsync(Order order)
         {
             order.SetStatus(OrderStatusEnum.Canceled);

@@ -1,9 +1,12 @@
 ﻿namespace Products.Catalog.Application.DTOs.Common
 {
+    /// <summary>
+    /// Represents a product structure.
+    /// </summary>
     public abstract class ProductDTO : EntityDTO
     {
         /// <summary>
-        /// Gets or sets the price of the product.
+        /// Price of the product.
         /// </summary>
         public required double Price { get; set; }
     }

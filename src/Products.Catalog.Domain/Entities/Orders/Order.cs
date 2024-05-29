@@ -14,6 +14,11 @@ namespace Products.Catalog.Domain.Entities.Orders
         public Guid Id { get; private set; }
 
         /// <summary>
+        /// A customer ID.
+        /// </summary>
+        public Guid CustomerId { get; set; }
+
+        /// <summary>
         /// A creation data of this order.
         /// </summary>
         public DateTime CreationData { get; private set; }
@@ -37,12 +42,14 @@ namespace Products.Catalog.Domain.Entities.Orders
         /// Constructor.
         /// </summary>
         /// <param name="id">A Order unique identificator.</param>
+        /// <param name="customerId">A customer ID.</param>
         /// <param name="creationData">A creation data of this order.</param>
         /// <param name="status">Current order status.</param>
         /// <param name="items">Items that are included in this order.</param>
         /// <param name="totalAmount">Amount of values for this order.</param>
         public Order(
             Guid id,
+            Guid customerId,
             DateTime creationData,
             OrderStatusEnum status,
             List<OrderItem> items,
@@ -50,6 +57,7 @@ namespace Products.Catalog.Domain.Entities.Orders
         )
         {
             Id = id;
+            CustomerId = customerId;
             CreationData = creationData;
             Status = status;
             Items = items;
@@ -65,6 +73,9 @@ namespace Products.Catalog.Domain.Entities.Orders
         {
             // Id
             DomainExceptionValidation.When(Id == Guid.Empty, "ID is required");
+
+            // CustomerId
+            DomainExceptionValidation.When(CustomerId == Guid.Empty, "Custumer ID is required");
 
             // Items
             DomainExceptionValidation.When(Items == null || !Items.Any(), "A order must have order items.");

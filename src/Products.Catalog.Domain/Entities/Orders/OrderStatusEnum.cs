@@ -1,7 +1,7 @@
 ﻿namespace Products.Catalog.Domain.Entities.Orders
 {
     /// <summary>
-    /// Define posible order status.
+    /// Define posible order status values.
     /// </summary>
     public enum OrderStatusEnum
     {

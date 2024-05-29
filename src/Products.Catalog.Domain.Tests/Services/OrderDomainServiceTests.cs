@@ -13,7 +13,7 @@ namespace Products.Catalog.Domain.Tests.Services
     public class OrderDomainServiceTests
     {
         private IOrderDomainService _orderDomainService;
-        private Mock<IBookRepository> _bookRepositoryMock;
+        private Mock<IBooksRepository> _bookRepositoryMock;
         private Mock<IOrderRepository> _orderRepositoryMock;
         private Mock<IStocksRepository> _stocksRepository;
         private List<Book> _books { get; set; }
@@ -26,7 +26,7 @@ namespace Products.Catalog.Domain.Tests.Services
             _orders = [];
             _stocks = [];
 
-            _bookRepositoryMock = new Mock<IBookRepository>();
+            _bookRepositoryMock = new Mock<IBooksRepository>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _stocksRepository = new Mock<IStocksRepository>();
 
@@ -123,7 +123,7 @@ namespace Products.Catalog.Domain.Tests.Services
             var orderId = Guid.NewGuid();
             var orderDate = DateTime.Now;
 
-            var order = new Order(orderId, orderDate, OrderStatusEnum.Created, orderItems, 0);
+            var order = new Order(orderId, Guid.NewGuid(), orderDate, OrderStatusEnum.Created, orderItems, 0);
 
             await _orderDomainService.ProcessNewOrderAsync(order);
 
@@ -165,7 +165,7 @@ namespace Products.Catalog.Domain.Tests.Services
             var orderId = Guid.NewGuid();
             var orderDate = DateTime.Now;
 
-            var order = new Order(orderId, orderDate, OrderStatusEnum.Created, orderItems, 0);
+            var order = new Order(orderId, Guid.NewGuid(), orderDate, OrderStatusEnum.Created, orderItems, 0);
 
             Func<Task> func = async () => await _orderDomainService.ProcessNewOrderAsync(order);
             await func.Should().ThrowAsync<DomainExceptionValidation>()
@@ -196,7 +196,7 @@ namespace Products.Catalog.Domain.Tests.Services
             ];
 
             var order = 
-                new Order(Guid.NewGuid(), DateTime.Now, OrderStatusEnum.Created, orderItems, 0);
+                new Order(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, OrderStatusEnum.Created, orderItems, 0);
 
             await _orderDomainService.CancelOrderAsync(order);
 

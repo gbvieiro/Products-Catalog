@@ -2,6 +2,9 @@
 
 namespace Products.Catalog.Application.DTOs
 {
+    /// <summary>
+    /// Represents a book structure.
+    /// </summary>
     public class BookDto : ProductDTO
     {
         /// <summary>

@@ -3,7 +3,10 @@ using Products.Catalog.Application.Services.Common;
 
 namespace Products.Catalog.Application.Services.Orders
 {
-    public interface IOrdersAppService : IAppService<OrderDto>
+    /// <summary>
+    /// Provide a interface for orders domain user cases.
+    /// </summary>
+    public interface IOrdersAppService : ICrudAppService<OrderDto>
     {
     }
 }
