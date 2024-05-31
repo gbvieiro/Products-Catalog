@@ -7,7 +7,7 @@ namespace Product.Catalog.Infra.Data.Repositories
     /// <summary>
     /// A book repository definition.
     /// </summary>
-    public class BookRepository : IBooksRepository
+    public class BooksRepository : IBooksRepository
     {
         /// <inheritdoc/>
         public Task DeleteAsync(Guid id)

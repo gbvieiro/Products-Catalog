@@ -1,6 +1,7 @@
 ﻿using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.Entities.Stocks;
+using Products.Catalog.Domain.Entities.Users;
 
 namespace Product.Catalog.Infra.Data.Database
 {
@@ -17,6 +18,7 @@ namespace Product.Catalog.Infra.Data.Database
             Books = [];
             Orders = [];
             Stocks = [];
+            Users = [];
         }
 
         /// <summary>
@@ -33,5 +35,10 @@ namespace Product.Catalog.Infra.Data.Database
         /// Storage stocks in memory.
         /// </summary>
         public static List<Stock> Stocks { get; set; }
+
+        /// <summary>
+        /// Storage users in memory.
+        /// </summary>
+        public static List<User> Users { get; set; }
     }
 }

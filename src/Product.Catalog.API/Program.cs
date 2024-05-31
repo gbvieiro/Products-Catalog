@@ -1,31 +1,26 @@
+using Product.Catalog.API.Configs;
 using Product.Catalog.Infra.IOC;
 using Products.Catalog.Infra.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+// Configure services
 builder.Services.AddInfrastructure();
 builder.Services.AddMapperService();
+builder.Services.AddCors();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddJWTAuthentication();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+// Configure app.
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
-
+app.UseCors(cors => { cors.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

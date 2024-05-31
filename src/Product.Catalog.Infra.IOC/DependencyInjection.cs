@@ -3,6 +3,7 @@ using Product.Catalog.Infra.Data.Repositories;
 using Products.Catalog.Application.Services.Books;
 using Products.Catalog.Application.Services.Orders;
 using Products.Catalog.Application.Services.Stocks;
+using Products.Catalog.Application.Services.Users;
 using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.IOC
@@ -23,11 +24,13 @@ namespace Product.Catalog.Infra.IOC
             services.AddScoped<IBooksAppService, BooksAppService>();
             services.AddScoped<IOrdersAppService, OrdersAppService>();
             services.AddScoped<IStocksAppService, StocksAppService>();
+            services.AddScoped<IUsersAppService, UsersAppService>();
 
             // Repositories.
             services.AddScoped<IBooksRepository, BooksRepository>();
             services.AddScoped<IOrderRepository, OrdersRepository>();
             services.AddScoped<IStocksRepository, StoksRepository>();
+            services.AddScoped<IUsersRepository, UsersRepository>();
 
             return services;
         }

@@ -7,7 +7,7 @@ namespace Product.Catalog.Infra.Data.Repositories
     /// <summary>
     /// A order repository definition.
     /// </summary>
-    public class OrderRepository : IOrderRepository
+    public class OrdersRepository : IOrderRepository
     {
         /// <inheritdoc/>
         public Task DeleteAsync(Guid id)
