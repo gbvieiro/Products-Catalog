@@ -42,6 +42,9 @@ namespace Product.Catalog.Infra.Data.Repositories
         public Task<User?> GetAsync(Guid id) =>
             Task.FromResult(Context.Users.FirstOrDefault(x => x.Id == id));
 
+        public Task<User?> GetByEmailAsync(string email) =>
+            Task.FromResult(Context.Users.FirstOrDefault(x => x.Email == email));
+
         /// <inheritdoc/>
         public Task SaveAsync(User entity)
         {

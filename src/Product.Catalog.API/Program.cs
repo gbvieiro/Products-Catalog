@@ -1,4 +1,4 @@
-using Product.Catalog.API.Configs;
+using Products.Catalog.Infra.Authentication;
 using Product.Catalog.Infra.IOC;
 using Products.Catalog.Infra.Mapper;
 

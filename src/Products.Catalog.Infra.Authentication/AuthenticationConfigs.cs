@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Product.Catalog.API.Configs
+namespace Products.Catalog.Infra.Authentication
 {
     /// <summary>
     /// Use this class to add authentication configs for this project.
@@ -12,7 +13,7 @@ namespace Product.Catalog.API.Configs
         /// <summary>
         /// This is a secret key that is used to generate the JWT token.
         /// </summary>
-        private static readonly string _secretKey = "6cd3556deb0da54bca060b4c39479839e4099838f212f115f27c0a4c21b8d7f6";
+        public static readonly string _secretKey = "6cd3556deb0da54bca060b4c39479839e4099838f212f115f27c0a4c21b8d7f6";
 
         // Define names in a static field avoid problems to rename it when necessary.
         public static readonly string AdminRuleName = "admin";
