@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.DTOs.Filters;
 using Products.Catalog.Application.Services.Users;
+using Products.Catalog.Infra.Authentication;
 
 namespace Product.Catalog.API.Controllers
 {
@@ -14,7 +16,7 @@ namespace Product.Catalog.API.Controllers
     public class UsersController(IUsersAppService usersAppService) : ControllerBase
     {
         /// <summary>
-        /// A book app service interface.
+        /// A user app service interface.
         /// </summary>
         private readonly IUsersAppService _usersAppService = usersAppService;
 
@@ -24,6 +26,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="id">A user id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
             var dto = await _usersAppService.GetAsync(id);
@@ -31,23 +34,12 @@ namespace Product.Catalog.API.Controllers
         }
 
         /// <summary>
-        /// Delete user.
-        /// </summary>
-        /// <param name="id">A user id.</param>
-        /// <returns>A http response with the status code.</returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
-        {
-            await _usersAppService.DeleteAsync(id);
-            return NoContent();
-        }
-
-        /// <summary>
         /// Save user.
         /// </summary>
-        /// <param name="stockDto">A stock dto.</param>
+        /// <param name="stockDto">A user dto.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> SaveAsync([FromBody] UserDto dto)
         {
             if (dto == null)
@@ -66,6 +58,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="filter">Filter parameters.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet()]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)
         {
             if (filter == null)
@@ -73,9 +66,7 @@ namespace Product.Catalog.API.Controllers
                 return BadRequest();
             }
 
-            var dtos = await _usersAppService.GetAllAsync(
-                filter.Text ?? string.Empty, filter.Skip, filter.Take
-            );
+            var dtos = await _usersAppService.GetAllAsync(filter.Text ?? string.Empty, filter.Skip, filter.Take);
 
             return Ok(dtos);
         }

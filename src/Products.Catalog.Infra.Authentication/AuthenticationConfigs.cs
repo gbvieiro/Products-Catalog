@@ -17,9 +17,9 @@ namespace Products.Catalog.Infra.Authentication
         public static readonly string _secretKey = "6cd3556deb0da54bca060b4c39479839e4099838f212f115f27c0a4c21b8d7f6";
 
         // Define names in a static field avoid problems to rename it when necessary.
-        public static readonly string AdminRuleName = "admin";
-        public static readonly string SellerRuleName = "seller";
-        public static readonly string ClientsRuleName = "client";
+        public const string Admin = "admin";
+        public const string Seller = "seller";
+        public const string Client = "client";
 
         /// <summary>
         /// Add JWT authetication to a service collection.

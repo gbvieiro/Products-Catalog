@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Catalog.Application.DTOs.Filters;
 using Products.Catalog.Application.DTOs.Stocks;
 using Products.Catalog.Application.Services.Stocks;
+using Products.Catalog.Infra.Authentication;
 
 namespace Product.Catalog.API.Controllers
 {
@@ -24,6 +26,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="id">A stock id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
             var stockDto = await _stocksAppService.GetAsync(id);
@@ -36,6 +39,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="bookId">A book id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet("book/{bookId}")]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> GetByBookIdAsync([FromRoute] Guid bookId)
         {
             var stockDto = await _stocksAppService.GetStockByBookId(bookId);
@@ -48,6 +52,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="bookId">A book id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPut("book/{bookId}/AddBooks")]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
         public async Task<IActionResult> AddBooksAsync([FromRoute] Guid bookId, [FromBody] AddStockDto dto)
         {
             if (dto == null)
@@ -60,24 +65,12 @@ namespace Product.Catalog.API.Controllers
         }
 
         /// <summary>
-        /// Delete stock.
-        /// </summary>
-        /// <param name="id">A stock id.</param>
-        /// <returns>A http response with the status code.</returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
-        {
-            await _stocksAppService.DeleteAsync(id);
-
-            return NoContent();
-        }
-
-        /// <summary>
         /// Save stock.
         /// </summary>
         /// <param name="stockDto">A stock dto.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
         public async Task<IActionResult> SaveAsync([FromBody] StockDto stockDto)
         {
             if (stockDto == null)
@@ -96,6 +89,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="filter">Filter parameters.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet()]
+        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)
         {
             if (filter == null)
