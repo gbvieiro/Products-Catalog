@@ -153,3 +153,7 @@ Take: 10 // first 10 items
 
 13. Use the "/api/Orders/{id}" method to see register order details, informing the order id.
 
+14. Login with the Admin user again and cancel the order using "/api/Orders/{orderId}/cancel" method, informing the order id.
+
+15. Use the "/api/Stocks/book/{bookId}" method to confirm that stock quantity is updated.
+

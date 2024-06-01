@@ -39,7 +39,7 @@ namespace Product.Catalog.API.Controllers
         /// </summary>
         /// <param name="orderId">orderId</param>
         /// <returns></returns>
-        [HttpPut("{id}/cancel")]
+        [HttpPut("{orderId}/cancel")]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> CancelAsync([FromRoute] Guid orderId)
         {
