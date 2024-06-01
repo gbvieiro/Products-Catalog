@@ -9,6 +9,7 @@ namespace Product.Catalog.API.Controllers
     /// <summary>
     /// Define API methods for Book.
     /// </summary>
+    /// <param name="booksAppSerice">A books app service instance.</param>
     [ApiController]
     [Route("api/[controller]")]
     public class BooksController(IBooksAppService booksAppSerice) : ControllerBase
@@ -41,7 +42,6 @@ namespace Product.Catalog.API.Controllers
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
             await _booksAppSerice.DeleteAsync(id);
-
             return NoContent();
         }
 
@@ -55,9 +55,7 @@ namespace Product.Catalog.API.Controllers
         public async Task<IActionResult> SaveAsync([FromBody] BookDto bookDTO)
         {
             if (bookDTO == null)
-            {
                 return BadRequest();
-            }
 
             await _booksAppSerice.SaveAsync(bookDTO);
 
@@ -74,9 +72,7 @@ namespace Product.Catalog.API.Controllers
         public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)
         {
             if (filter == null)
-            {
                 return BadRequest();
-            }
 
             var booksDtos = await _booksAppSerice.GetAllAsync(
                 filter.Text ?? string.Empty, filter.Skip, filter.Take

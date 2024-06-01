@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Domain.Entities.Books;
+using Products.Catalog.Domain.Entities.Stocks;
 using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Products.Catalog.Application.Services.Books
@@ -8,12 +9,24 @@ namespace Products.Catalog.Application.Services.Books
     /// <summary>
     /// Provide book domain user cases.
     /// </summary>
-    public class BooksAppService(IBooksRepository bookRepository, IMapper mapper) : IBooksAppService
+    /// <param name="bookRepository">A book repository instance.</param>
+    /// <param name="stocksRepository">A stock repository instance.</param>
+    /// <param name="mapper">A mapper service.</param>
+    public class BooksAppService(
+        IBooksRepository bookRepository,
+        IStocksRepository stocksRepository,
+        IMapper mapper
+    ) : IBooksAppService
     {
         /// <summary>
-        /// A book repository interface.
+        /// A books repository interface.
         /// </summary>
         private readonly IBooksRepository _bookRepository = bookRepository;
+
+        /// <summary>
+        /// A stocks repository interface.
+        /// </summary>
+        private readonly IStocksRepository _stocksRepository = stocksRepository;
 
         /// <summary>
         /// A mapper service.
@@ -21,7 +34,23 @@ namespace Products.Catalog.Application.Services.Books
         private readonly IMapper _mapper = mapper;
 
         /// <inheritdoc/>
-        public Task DeleteAsync(Guid id) => _bookRepository.DeleteAsync(id);
+        public async Task DeleteAsync(Guid id)
+        {
+            var stock = await _stocksRepository.GetByBookId(id);
+
+            var tasks = new List<Task>
+            {
+                _bookRepository.DeleteAsync(id)
+            };
+
+            if(stock != null)
+            {
+                tasks.Add(_stocksRepository.DeleteAsync(stock.Id));
+            }
+
+            // Execute all in parallel.
+            await Task.WhenAll(tasks);
+        }
 
         /// <inheritdoc/>
         public async Task<List<BookDto>> GetAllAsync(string filtertext, int skip, int take)
@@ -38,12 +67,23 @@ namespace Products.Catalog.Application.Services.Books
         }
 
         /// <inheritdoc/>
-        public Task SaveAsync(BookDto bookDto)
+        public async Task SaveAsync(BookDto bookDto)
         {
+            // Avoid bad requests.
             ArgumentNullException.ThrowIfNull(bookDto);
+
             bookDto.GenerateId();
             var book = _mapper.Map<Book>(bookDto);
-            return _bookRepository.SaveAsync(book);
+            
+            // Save book
+            await _bookRepository.SaveAsync(book);
+
+            // Creates a new book stock
+            // All registeres books must have a stock.
+            var newBookStock = new Stock(Guid.NewGuid(), 0, book.Id);
+
+            // Save stock
+            await _stocksRepository.SaveAsync(newBookStock);
         }
     }
 }

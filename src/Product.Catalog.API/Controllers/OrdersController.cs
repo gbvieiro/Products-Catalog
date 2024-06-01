@@ -8,6 +8,7 @@ namespace Product.Catalog.API.Controllers
     /// <summary>
     /// Define API methods for orders.
     /// </summary>
+    /// <param name="ordersAppService">A orders app service instance.</param>
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController(IOrdersAppService ordersAppService) : ControllerBase

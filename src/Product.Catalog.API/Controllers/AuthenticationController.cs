@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Catalog.Infra.Authentication;
 
 namespace Product.Catalog.API.Controllers
@@ -6,10 +7,7 @@ namespace Product.Catalog.API.Controllers
     /// <summary>
     /// Define API methods for Authentication.
     /// </summary>
-    /// <remarks>
-    /// Constroller.
-    /// </remarks>
-    /// <param name="authenticationService"></param>
+    /// <param name="authenticationService">A authentication service instance.</param>
     [ApiController]
     [Route("api/[controller]")]
     public class AuthenticationController(IAuthenticationService authenticationService) : ControllerBase
@@ -19,17 +17,20 @@ namespace Product.Catalog.API.Controllers
         /// </summary>
         private readonly IAuthenticationService _authenticationService = authenticationService;
 
+        /// <summary>
+        /// The login method.
+        /// </summary>
+        /// <param name="dto">Authentication model.</param>
+        /// <returns>A token.</returns>
         [HttpPost]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel userDto)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] AuthenticationModel dto)
         {
             try
             {
-                var token = await _authenticationService.AuthenticateUser(userDto);
-
+                var token = await _authenticationService.AuthenticateUser(dto);
                 if (token == null)
-                {
                     return Unauthorized();
-                }
 
                 return Ok(token);
             }
