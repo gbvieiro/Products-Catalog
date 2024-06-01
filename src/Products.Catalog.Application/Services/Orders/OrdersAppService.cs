@@ -80,9 +80,6 @@ namespace Products.Catalog.Application.Services.Orders
             orderDto.GenerateId();
             var order = _mapper.Map<Order>(orderDto);
 
-            // Save order.
-            //await _orderRepository.SaveAsync(order);
-
             // Process a new order.
             await _orderDomainService.ProcessNewOrderAsync(order);
         }

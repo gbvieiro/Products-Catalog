@@ -26,8 +26,7 @@ namespace Product.Catalog.API.Controllers
         /// </summary>
         /// <param name="orderId">A order id.</param>
         /// <returns>A http response with the status code.</returns>
-        [HttpGet("{id}")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
+        [HttpGet("{orderId}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid orderId)
         {
             var dto = await _ordersAppService.GetAsync(orderId);
