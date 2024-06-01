@@ -48,9 +48,14 @@ namespace Product.Catalog.API.Controllers
         /// <param name="bookId">A book id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPut("book/{bookId}/AddBooks")]
-        public async Task<IActionResult> AddBooksAsync([FromRoute] Guid bookId, [FromBody] int quantity)
+        public async Task<IActionResult> AddBooksAsync([FromRoute] Guid bookId, [FromBody] AddStockDto dto)
         {
-            var responseMessage = await _stocksAppService.AddItemsToStock(bookId, quantity);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+
+            var responseMessage = await _stocksAppService.AddItemsToStock(bookId, dto.Quantity);
             return Ok(responseMessage);
         }
 
