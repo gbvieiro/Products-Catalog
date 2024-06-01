@@ -52,7 +52,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="brandsIds">A list of brands ids.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveAsync([FromBody] BookDto bookDTO)
         {
             if (bookDTO == null)

@@ -5,6 +5,6 @@
     /// </summary>
     public interface IAuthenticationService
     {
-        Task<dynamic?> AuthenticateUser(AuthenticationModel userDto);
+        Task<string> GenerateToken(AuthenticationModel userDto);
     }
 }

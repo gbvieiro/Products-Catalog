@@ -39,7 +39,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="stockDto">A user dto.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
+        [AllowAnonymous]
         public async Task<IActionResult> SaveAsync([FromBody] UserDto dto)
         {
             if (dto == null)

@@ -16,40 +16,41 @@ namespace Products.Catalog.Infra.Authentication
         private readonly IUsersRepository _usersRepository = usersRepository;
 
         /// <inheritdoc/>
-        public async Task<dynamic?> AuthenticateUser(AuthenticationModel userDto)
+        public async Task<string> GenerateToken(AuthenticationModel userDto)
         {
             var  user = await _usersRepository.GetByEmailAsync(userDto.Email);
 
             if (user == null)
+                return string.Empty;
+
+            if (user.Password == userDto.Password)
+                return GenerateToken(userDto.Email, user.Role.ToLower());
+            
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Generates a new token.
+        /// </summary>
+        /// <param name="userId">A user id.</param>
+        /// <param name="role">A user role.</param>
+        /// <returns></returns>
+        private static string GenerateToken(string userId, string role)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(AuthenticationConfigs._secretKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                return null;
-            }
-
-            if (user.Password == userDto.Password) 
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                var key = Encoding.ASCII.GetBytes(AuthenticationConfigs._secretKey);
-
-                var tokenDescription = new SecurityTokenDescriptor
+                Subject = new ClaimsIdentity(new Claim[]
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.Email.ToString()),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(2),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var token = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescription));
-                return new { Token = token };
-            } 
-            else
-            {
-                return null;
-            }
+                    new(ClaimTypes.NameIdentifier, userId),
+                    new(ClaimTypes.Role, role)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

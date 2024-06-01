@@ -29,11 +29,12 @@ namespace Product.Catalog.API.Controllers
         {
             try
             {
-                var token = await _authenticationService.AuthenticateUser(dto);
+                var token = await _authenticationService.GenerateToken(dto);
+                
                 if (token == null)
                     return Unauthorized();
 
-                return Ok(token);
+                return Ok($"Bearer {token}");
             }
             catch (Exception e)
             {
@@ -51,9 +52,9 @@ namespace Product.Catalog.API.Controllers
             try
             {
                 var id = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-                var email = this.User!.Identity!.Name;
+                var role = this.User.FindFirst(ClaimTypes.Role)?.Value!;
 
-                return Ok(new { id, email });
+                return Ok(new { id, role });
             }
             catch (Exception e)
             {
