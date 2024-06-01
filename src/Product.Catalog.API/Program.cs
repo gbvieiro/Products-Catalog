@@ -1,5 +1,5 @@
-using Products.Catalog.Infra.Authentication;
 using Product.Catalog.Infra.IOC;
+using Products.Catalog.Infra.Authentication;
 using Products.Catalog.Infra.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +10,7 @@ builder.Services.AddMapperService();
 builder.Services.AddCors();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerWithAuthorizeButton("ProductCatalogToken", "Authorization");
 builder.Services.AddJWTAuthentication();
 
 var app = builder.Build();

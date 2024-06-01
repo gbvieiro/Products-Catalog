@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.DTOs.Filters;
 using Products.Catalog.Application.Services.Books;
@@ -18,11 +19,12 @@ namespace Product.Catalog.API.Controllers
         private readonly IBooksAppService _booksAppSerice = booksAppSerice;
 
         /// <summary>
-        /// Get book.
+        /// Get book informing the ID.
         /// </summary>
-        /// <param name="id">A book id.</param>
+        /// <param name="id">A book ID.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
             var dto = await _booksAppSerice.GetAsync(id);
@@ -35,6 +37,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="id">A book id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
             await _booksAppSerice.DeleteAsync(id);
@@ -48,6 +51,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="brandsIds">A list of brands ids.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveAsync([FromBody] BookDto bookDTO)
         {
             if (bookDTO == null)
@@ -66,6 +70,7 @@ namespace Product.Catalog.API.Controllers
         /// <param name="filter">Filter parameters.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet()]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)
         {
             if (filter == null)

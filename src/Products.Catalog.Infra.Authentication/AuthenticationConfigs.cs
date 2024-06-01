@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace Products.Catalog.Infra.Authentication
@@ -14,7 +15,7 @@ namespace Products.Catalog.Infra.Authentication
         /// This is a secret key that is used to generate the JWT token.
         /// </summary>
         public static readonly string _secretKey = "6cd3556deb0da54bca060b4c39479839e4099838f212f115f27c0a4c21b8d7f6";
-
+        
         // Define names in a static field avoid problems to rename it when necessary.
         public static readonly string AdminRuleName = "admin";
         public static readonly string SellerRuleName = "seller";
@@ -42,6 +43,39 @@ namespace Products.Catalog.Infra.Authentication
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
+            });
+        }
+
+        /// <summary>
+        /// Add swagger but with a authorize button.
+        /// </summary>
+        /// <param name="services">Current project service collection.</param>
+        /// <param name="schemeName">A scheme name. (Must be unique)</param>
+        /// <param name="headerName">A header name to receive a token.</param>
+        public static void AddSwaggerWithAuthorizeButton(this IServiceCollection services, string schemeName, string headerName)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                var scheme = new OpenApiSecurityScheme()
+                {
+                    Name = headerName,
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Scheme = schemeName,
+                    BearerFormat = "String"
+                };
+
+                var reference = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = schemeName
+                    }
+                };
+
+                c.AddSecurityDefinition(schemeName, scheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {{reference, Array.Empty<string>()}});
             });
         }
     }

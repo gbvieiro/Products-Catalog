@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.2 - CrossCutting", "4.2 -
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products.Catalog.Infra.Mapper", "Products.Catalog.Infra.Mapper\Products.Catalog.Infra.Mapper.csproj", "{FEFFB809-B6F0-4577-A61F-C5805E4B14F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.Catalog.Infra.Authentication", "Products.Catalog.Infra.Authentication\Products.Catalog.Infra.Authentication.csproj", "{FB9CE52E-4183-4FFB-90A0-63309B341321}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products.Catalog.Infra.Authentication", "Products.Catalog.Infra.Authentication\Products.Catalog.Infra.Authentication.csproj", "{FB9CE52E-4183-4FFB-90A0-63309B341321}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
