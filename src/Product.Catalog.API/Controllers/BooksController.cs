@@ -59,7 +59,7 @@ namespace Product.Catalog.API.Controllers
 
             await _booksAppSerice.SaveAsync(bookDTO);
 
-            return Ok(bookDTO.Id);
+            return Ok(bookDTO);
         }
 
         /// <summary>

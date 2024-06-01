@@ -1,6 +1,6 @@
 ﻿using Products.Catalog.Application.DTOs.Common;
 
-namespace Products.Catalog.Application.DTOs
+namespace Products.Catalog.Application.DTOs.Stocks
 {
     /// <summary>
     /// Represents a stock structure.
@@ -8,18 +8,13 @@ namespace Products.Catalog.Application.DTOs
     public class StockDto : EntityDTO
     {
         /// <summary>
-        /// A stock unique identificator.
-        /// </summary>
-        public Guid Id { get; private set; }
-
-        /// <summary>
         /// The quantity of the product in stock.
         /// </summary>
-        public int Quantity { get; private set; }
+        public int Quantity { get; set; }
 
         /// <summary>
         /// A book id.
         /// </summary>
-        public Guid BookId { get; private set; }
+        public Guid BookId { get; set; }
     }
 }

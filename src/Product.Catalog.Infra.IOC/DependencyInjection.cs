@@ -5,6 +5,7 @@ using Products.Catalog.Application.Services.Orders;
 using Products.Catalog.Application.Services.Stocks;
 using Products.Catalog.Application.Services.Users;
 using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Services.Orders;
 using Products.Catalog.Infra.Authentication;
 
 namespace Product.Catalog.Infra.IOC
@@ -29,6 +30,9 @@ namespace Product.Catalog.Infra.IOC
 
             // Authentication services
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+            // Domain services
+            services.AddScoped<IOrderDomainService, OrderDomainService>();
 
             // Repositories.
             services.AddScoped<IBooksRepository, BooksRepository>();

@@ -4,7 +4,7 @@ using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.Entities.Stocks;
 using Products.Catalog.Domain.RepositoriesInterfaces;
-using Products.Catalog.Domain.Services.Stock;
+using Products.Catalog.Domain.Services.Orders;
 using Products.Catalog.Domain.Validations;
 using Xunit;
 
@@ -12,12 +12,12 @@ namespace Products.Catalog.Domain.Tests.Services
 {
     public class OrderDomainServiceTests
     {
-        private IOrderDomainService _orderDomainService;
-        private Mock<IBooksRepository> _bookRepositoryMock;
-        private Mock<IOrderRepository> _orderRepositoryMock;
-        private Mock<IStocksRepository> _stocksRepository;
+        private readonly IOrderDomainService _orderDomainService;
+        private readonly Mock<IBooksRepository> _bookRepositoryMock;
+        private readonly Mock<IOrderRepository> _orderRepositoryMock;
+        private readonly Mock<IStocksRepository> _stocksRepository;
         private List<Book> _books { get; set; }
-        private List<Order> _orders { get; set; }
+        private  List<Order> _orders { get; set; }
         private List<Stock> _stocks { get; set; }
 
         public OrderDomainServiceTests() 

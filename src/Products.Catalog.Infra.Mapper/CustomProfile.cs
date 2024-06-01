@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.DTOs.Common;
+using Products.Catalog.Application.DTOs.Stocks;
 using Products.Catalog.Domain.Entities.Base;
 using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;

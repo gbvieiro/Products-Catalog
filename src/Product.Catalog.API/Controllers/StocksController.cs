@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.DTOs.Filters;
+using Products.Catalog.Application.DTOs.Stocks;
 using Products.Catalog.Application.Services.Stocks;
 
 namespace Product.Catalog.API.Controllers
@@ -28,6 +28,30 @@ namespace Product.Catalog.API.Controllers
         {
             var stockDto = await _stocksAppService.GetAsync(id);
             return Ok(stockDto);
+        }
+
+        /// <summary>
+        /// Get stock.
+        /// </summary>
+        /// <param name="bookId">A book id.</param>
+        /// <returns>A http response with the status code.</returns>
+        [HttpGet("book/{bookId}")]
+        public async Task<IActionResult> GetByBookIdAsync([FromRoute] Guid bookId)
+        {
+            var stockDto = await _stocksAppService.GetStockByBookId(bookId);
+            return Ok(stockDto);
+        }
+
+        /// <summary>
+        /// Get stock.
+        /// </summary>
+        /// <param name="bookId">A book id.</param>
+        /// <returns>A http response with the status code.</returns>
+        [HttpPut("book/{bookId}/AddBooks")]
+        public async Task<IActionResult> AddBooksAsync([FromRoute] Guid bookId, [FromBody] int quantity)
+        {
+            var responseMessage = await _stocksAppService.AddItemsToStock(bookId, quantity);
+            return Ok(responseMessage);
         }
 
         /// <summary>

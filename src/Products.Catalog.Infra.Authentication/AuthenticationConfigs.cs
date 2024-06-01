@@ -15,7 +15,7 @@ namespace Products.Catalog.Infra.Authentication
         /// This is a secret key that is used to generate the JWT token.
         /// </summary>
         public static readonly string _secretKey = "6cd3556deb0da54bca060b4c39479839e4099838f212f115f27c0a4c21b8d7f6";
-        
+
         // Define names in a static field avoid problems to rename it when necessary.
         public static readonly string AdminRuleName = "admin";
         public static readonly string SellerRuleName = "seller";
@@ -46,16 +46,46 @@ namespace Products.Catalog.Infra.Authentication
             });
         }
 
+
         /// <summary>
         /// Add swagger but with a authorize button.
         /// </summary>
         /// <param name="services">Current project service collection.</param>
+        /// <param name="projectTitle">A project title.</param>
+        /// <param name="description">A project description.</param>
+        /// <param name="version">A project version.</param>
+        /// <param name="developerName">A developer name.</param>
+        /// <param name="developerEmail">A developer email.</param>
+        /// <param name="developerURI">A developer URI.</param>
         /// <param name="schemeName">A scheme name. (Must be unique)</param>
         /// <param name="headerName">A header name to receive a token.</param>
-        public static void AddSwaggerWithAuthorizeButton(this IServiceCollection services, string schemeName, string headerName)
+        public static void AddSwaggerWithAuthorizeButton(
+            this IServiceCollection services,
+            string projectTitle,
+            string description,
+            string version,
+            string developerName,
+            string developerEmail,
+            string developerURI,
+            string schemeName,
+            string headerName
+        )
         {
             services.AddSwaggerGen(c =>
             {
+                c.SwaggerDoc(version, new OpenApiInfo
+                {
+                    Title = projectTitle,
+                    Version = version,
+                    Description = description,
+                    Contact = new OpenApiContact()
+                    {
+                        Name = developerName,
+                        Email = developerEmail,
+                        Url = new Uri(developerURI)
+                    }
+                }); 
+
                 var scheme = new OpenApiSecurityScheme()
                 {
                     Name = headerName,
@@ -75,7 +105,7 @@ namespace Products.Catalog.Infra.Authentication
                 };
 
                 c.AddSecurityDefinition(schemeName, scheme);
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {{reference, Array.Empty<string>()}});
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement { { reference, Array.Empty<string>() } });
             });
         }
     }

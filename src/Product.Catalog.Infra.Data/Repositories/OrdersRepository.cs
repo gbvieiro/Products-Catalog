@@ -57,5 +57,27 @@ namespace Product.Catalog.Infra.Data.Repositories
 
             return Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<Order>> GetAllAsync(string filter, int skip, int take, Guid userId)
+        {
+            if (Context.Orders == null)
+            {
+                throw new Exception("Context is not initialized.");
+            }
+
+            IEnumerable<Order> orders;
+
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                orders = Context.Orders.Where(x =>
+                    x.CustomerId == userId &&
+                    x.Status.ToString().Contains(filter) ||
+                    x.Id.ToString().Contains(filter) 
+                );
+            }
+
+            return Task.FromResult(Context.Orders.Where(x => x.CustomerId == userId).Skip(skip).Take(take));
+        }
     }
 }

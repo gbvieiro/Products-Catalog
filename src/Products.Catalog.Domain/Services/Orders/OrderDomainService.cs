@@ -1,28 +1,36 @@
-﻿using Products.Catalog.Domain.Entities.Books;
-using Products.Catalog.Domain.Entities.Orders;
+﻿using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.RepositoriesInterfaces;
 using Products.Catalog.Domain.Validations;
-using System.ComponentModel;
-using System.Linq;
 
-namespace Products.Catalog.Domain.Services.Stock
+namespace Products.Catalog.Domain.Services.Orders
 {
-    public class OrderDomainService : IOrderDomainService
+    /// <summary>
+    /// A order domain service. 
+    /// Provide some important rules for orders management.
+    /// </summary>
+    /// <param name="bookRepository">A book repository instance.</param>
+    /// <param name="orderRepository">A order repository instance.</param>
+    /// <param name="stockRepository">A stock repository instance.</param>
+    public class OrderDomainService(
+        IBooksRepository bookRepository,
+        IOrderRepository orderRepository,
+        IStocksRepository stockRepository
+    ) : IOrderDomainService
     {
-        private IBooksRepository _bookRepository;
-        private IOrderRepository _orderRepository;
-        private IStocksRepository _stockRepository;
+        /// <summary>
+        /// A books repository interface.
+        /// </summary>
+        private readonly IBooksRepository _bookRepository = bookRepository;
         
-        public OrderDomainService(
-            IBooksRepository bookRepository,
-            IOrderRepository orderRepository,
-            IStocksRepository stockRepository
-        )
-        {
-            _bookRepository = bookRepository;
-            _orderRepository = orderRepository;
-            _stockRepository = stockRepository;
-        }
+        /// <summary>
+        /// A orders repository interface.
+        /// </summary>
+        private readonly IOrderRepository _orderRepository = orderRepository;
+        
+        /// <summary>
+        /// A stocks repository interface.
+        /// </summary>
+        private readonly IStocksRepository _stockRepository = stockRepository;
 
         /// <inheritdoc/>
         public async Task ProcessNewOrderAsync(Order order)

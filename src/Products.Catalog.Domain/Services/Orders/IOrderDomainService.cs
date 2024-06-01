@@ -1,6 +1,6 @@
 ﻿using Products.Catalog.Domain.Entities.Orders;
 
-namespace Products.Catalog.Domain.Services.Stock
+namespace Products.Catalog.Domain.Services.Orders
 {
     /// <summary>
     /// A domain service that define important busines rules for orders.

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.DTOs.Filters;
 using Products.Catalog.Application.Services.Orders;
+using System.Security.Claims;
 
 namespace Product.Catalog.API.Controllers
 {
@@ -21,25 +23,37 @@ namespace Product.Catalog.API.Controllers
         /// <summary>
         /// Get order.
         /// </summary>
-        /// <param name="id">A order id.</param>
+        /// <param name="orderId">A order id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+        public async Task<IActionResult> GetAsync([FromRoute] Guid orderId)
         {
-            var dto = await _ordersAppService.GetAsync(id);
+            var dto = await _ordersAppService.GetAsync(orderId);
             return Ok(dto);
         }
 
         /// <summary>
         /// Delete order.
         /// </summary>
-        /// <param name="id">A order id.</param>
+        /// <param name="orderId">A order id.</param>
         /// <returns>A http response with the status code.</returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid orderId)
         {
-            await _ordersAppService.DeleteAsync(id);
+            await _ordersAppService.DeleteAsync(orderId);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Cancel order.
+        /// </summary>
+        /// <param name="orderId">orderId</param>
+        /// <returns></returns>
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelAsync([FromRoute] Guid orderId)
+        {
+            var responseMessage = await _ordersAppService.CancelAsync(orderId);
+            return Ok(responseMessage);
         }
 
         /// <summary>
@@ -58,6 +72,27 @@ namespace Product.Catalog.API.Controllers
             await _ordersAppService.SaveAsync(orderDto);
 
             return Ok(orderDto.Id);
+        }
+
+        /// <summary>
+        /// Get all orders for the current user.
+        /// </summary>
+        /// <param name="filter">Filter parameters.</param>
+        /// <returns>A http response with the status code.</returns>
+        [HttpGet("MyOrders")]
+        [Authorize]
+        public async Task<IActionResult> MyOrdersAsync([FromQuery] TextFilterPaginationDTO filter)
+        {
+            if (filter == null)
+            {
+                return BadRequest();
+            }
+
+            var booksDtos = await _ordersAppService.GetAllAsync(
+                filter.Text ?? string.Empty, filter.Skip, filter.Take, new Guid(this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!)
+            );
+
+            return Ok(booksDtos);
         }
 
         /// <summary>
