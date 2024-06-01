@@ -196,7 +196,7 @@ This solution contains some unit tests, follow above steps for running it and se
 
 - Select the tests: In the Test Explorer window, you'll see a list of available tests. You can select all tests by right-clicking anywhere in the list and selecting "Run All Tests" from the context menu.
 
- -Run the tests: After selecting the tests you want to run, click the "Run All Tests" button at the top of the Test Explorer window. This will start the execution of all selected tests.
+ - Run the tests: After selecting the tests you want to run, click the "Run All Tests" button at the top of the Test Explorer window. This will start the execution of all selected tests.
 
 - Check the results: After the tests finish running, you'll see the results in the Test Explorer window. Successful tests will be displayed in green, while failed tests will be displayed in red. You can click on each test to view details about the results.
 
