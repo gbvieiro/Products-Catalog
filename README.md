@@ -83,13 +83,13 @@ Bearer <your-token-here>
     "price": 22.50,
     "title": "The Shining",
     "author": "Stephen King",
-    "genre": 10 // Horror
+    "genre": 10
 }
 ```
 
 The new book will be returned with the new ID. Copy this id for the next step.
 
-## 6. Confirm that your new book was added using the "/api/Books/{id}/AddBooks" method informing the book Id on the field and a quantity of items in the body:
+## 6. Use the "/api/Stocks/book/{bookId}/AddBooks" method to insert some items to stocks. Informing the book Id on the field and a quantity of items in the body:
 
 ```javascript
 {
@@ -104,7 +104,7 @@ The new book will be returned with the new ID. Copy this id for the next step.
 ```javascript
 {
     "customerId": "{your-client-user-id-here}",
-    "creationData": "2024-06-01T04:28:55.493Z", // Modify for a current data
+    "creationData": "2024-06-01T04:28:55.493Z",
     "status": 0,
     "items": [
     {
@@ -116,11 +116,15 @@ The new book will be returned with the new ID. Copy this id for the next step.
 }
 ```
 
-## 9. Perform a logout clicking in the "Authorize" button again.
+## 10. Confirm that the order items were reserved:
+
+- Use the "/api/Stocks/book/{bookId}" method again and verify the stock quantity.
+
+## 10. Perform a logout clicking in the "Authorize" button again.
 
 - When the modal is showed click on "Logoff"
 
-## 10. Using the "api/Authentication/GenerateToken" to Generate a token to the client user:
+## 11. Using the "api/Authentication/GenerateToken" to Generate a token to the client user:
 
 ```javascript
 {
@@ -131,7 +135,7 @@ The new book will be returned with the new ID. Copy this id for the next step.
 
 A token will be returned, copy it to a notepad.
 
-## 11. Using the "Authorize" button, inform the returned token using this format:
+## 12. Using the "Authorize" button, inform the returned token using this format:
 
 ```javascript
 Bearer <your-token-here>
@@ -141,7 +145,7 @@ Bearer <your-token-here>
 - Now you are authenticated!
 - Close the modal.
 
-## 12. Use the "/api/Orders/MyOrders" method to see current client user orders. This is a paginated API so we can set
+## 13. Use the "/api/Orders/MyOrders" method to see current client user orders. This is a paginated API so we can set
 parameters with these values:
 
 Text: ""
@@ -151,8 +155,8 @@ Take: 10 // first 10 items
 - The created order must be returned.
 - Copy the order Id.
 
-## 13. Use the "/api/Orders/{id}" method to see register order details, informing the order id.
+## 14. Use the "/api/Orders/{id}" method to see register order details, informing the order id.
 
-## 14. Login with the Admin user again and cancel the order using "/api/Orders/{orderId}/cancel" method, informing the order id.
+## 15. Login with the Admin user again and cancel the order using "/api/Orders/{orderId}/cancel" method, informing the order id.
 
-## 15. Use the "/api/Stocks/book/{bookId}" method to confirm that stock quantity is updated.
+## 16. Use the "/api/Stocks/book/{bookId}" method to confirm that stock quantity is updated.

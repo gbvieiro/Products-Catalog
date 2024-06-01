@@ -49,7 +49,7 @@ namespace Product.Catalog.Infra.Data.Repositories
         {
             var savedEntityIndex = Context.Orders.FindIndex(x => x.Id == entity.Id);
 
-            if (savedEntityIndex != -1) {
+            if (savedEntityIndex == -1) {
                 Context.Orders.Add(entity);
             } else {
                 Context.Orders[savedEntityIndex] = entity;
@@ -66,15 +66,13 @@ namespace Product.Catalog.Infra.Data.Repositories
                 throw new Exception("Context is not initialized.");
             }
 
-            IEnumerable<Order> orders;
-
             if (string.IsNullOrWhiteSpace(filter))
             {
-                orders = Context.Orders.Where(x =>
+                return Task.FromResult(Context.Orders.Where(x =>
                     x.CustomerId == userId &&
                     x.Status.ToString().Contains(filter) ||
                     x.Id.ToString().Contains(filter) 
-                );
+                ).Skip(skip).Take(take));
             }
 
             return Task.FromResult(Context.Orders.Where(x => x.CustomerId == userId).Skip(skip).Take(take));

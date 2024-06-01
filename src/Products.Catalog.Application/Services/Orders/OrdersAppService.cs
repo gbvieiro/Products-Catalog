@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.RepositoriesInterfaces;
@@ -79,6 +79,9 @@ namespace Products.Catalog.Application.Services.Orders
             // Create new order bases on the informed parameters.
             orderDto.GenerateId();
             var order = _mapper.Map<Order>(orderDto);
+
+            // Save order.
+            //await _orderRepository.SaveAsync(order);
 
             // Process a new order.
             await _orderDomainService.ProcessNewOrderAsync(order);
