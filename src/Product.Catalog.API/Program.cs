@@ -2,10 +2,8 @@ using Product.Catalog.Infra.IOC;
 using Products.Catalog.Infra.Authentication;
 using Products.Catalog.Infra.Mapper;
 
-// Create builder.
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure services
 builder.Services.AddInfrastructure();
 builder.Services.AddMapperService();
 builder.Services.AddCors();
@@ -23,10 +21,8 @@ builder.Services.AddSwaggerWithAuthorizeButton(
 );
 builder.Services.AddJWTAuthentication();
 
-// Build app.
 var app = builder.Build();
 
-// Configure app.
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

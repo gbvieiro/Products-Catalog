@@ -5,9 +5,6 @@ using Xunit;
 
 namespace Products.Catalog.Domain.Tests.Entities
 {
-    /// <summary>
-    /// User entity unit tests.
-    /// </summary>
     public class UserUnitTests
     {
         [Fact]

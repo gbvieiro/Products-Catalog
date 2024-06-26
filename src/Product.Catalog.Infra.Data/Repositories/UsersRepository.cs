@@ -4,19 +4,14 @@ using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {
-    /// <summary>
-    /// A user repository definition.
-    /// </summary>
     public class UsersRepository : IUsersRepository
     {
-        /// <inheritdoc/>
         public Task DeleteAsync(Guid id)
         {
             Context.Users = new List<User>(Context.Users.Where(x => x.Id != id));
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public Task<IEnumerable<User>> GetAllAsync(string filter, int skip, int take)
         {
             if (Context.Users == null)
@@ -38,14 +33,12 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.FromResult(Context.Users.Skip(skip).Take(take));
         }
 
-        /// <inheritdoc/>
         public Task<User?> GetAsync(Guid id) =>
             Task.FromResult(Context.Users.FirstOrDefault(x => x.Id == id));
 
         public Task<User?> GetByEmailAsync(string email) =>
             Task.FromResult(Context.Users.FirstOrDefault(x => x.Email == email));
 
-        /// <inheritdoc/>
         public Task SaveAsync(User entity)
         {
             var savedEntityIndex = Context.Users.FindIndex(x => x.Id == entity.Id);

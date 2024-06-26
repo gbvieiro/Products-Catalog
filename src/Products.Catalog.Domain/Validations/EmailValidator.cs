@@ -2,16 +2,8 @@
 
 namespace Products.Catalog.Domain.Validations
 {
-    /// <summary>
-    /// This class provide validation methods for Emails.
-    /// </summary>
     public class EmailValidator
     {
-        /// <summary>
-        /// The informed email is valid?
-        /// </summary>
-        /// <param name="email">A email.</param>
-        /// <returns>True if valid. False if not valid.</returns>
         public static bool IsValidEmail(string email)
         {
             if(string.IsNullOrWhiteSpace(email))

@@ -4,23 +4,17 @@ using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {
-    /// <summary>
-    /// A book repository definition.
-    /// </summary>
     public class BooksRepository : IBooksRepository
     {
-        /// <inheritdoc/>
         public Task DeleteAsync(Guid id)
         {
             Context.Books = new List<Book>(Context.Books.Where(x => x.Id != id));
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public Task<Book?> GetAsync(Guid id) =>
             Task.FromResult(Context.Books.FirstOrDefault(x => x.Id == id));
 
-        /// <inheritdoc/>
         public Task<IEnumerable<Book>> GetAllAsync(string filter, int skip, int take)
         {
             if (Context.Books == null)
@@ -45,7 +39,6 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.FromResult(Context.Books.Skip(skip).Take(take));
         }
 
-        /// <inheritdoc/>
         public Task SaveAsync(Book entity)
         {
             var savedEntityIndex = Context.Books.FindIndex(x => x.Id == entity.Id);
@@ -61,7 +54,6 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public Task<double> GetBookPrice(Guid id)
         {
             if (Context.Books == null)

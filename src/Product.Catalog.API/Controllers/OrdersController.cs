@@ -8,24 +8,12 @@ using System.Security.Claims;
 
 namespace Product.Catalog.API.Controllers
 {
-    /// <summary>
-    /// Define API methods for orders.
-    /// </summary>
-    /// <param name="ordersAppService">A orders app service instance.</param>
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController(IOrdersAppService ordersAppService) : ControllerBase
     {
-        /// <summary>
-        /// A orders app service interface.
-        /// </summary>
         private readonly IOrdersAppService _ordersAppService = ordersAppService;
 
-        /// <summary>
-        /// Get order.
-        /// </summary>
-        /// <param name="orderId">A order id.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid orderId)
         {
@@ -33,11 +21,6 @@ namespace Product.Catalog.API.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Cancel order.
-        /// </summary>
-        /// <param name="orderId">orderId</param>
-        /// <returns></returns>
         [HttpPut("{orderId}/cancel")]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> CancelAsync([FromRoute] Guid orderId)
@@ -46,11 +29,6 @@ namespace Product.Catalog.API.Controllers
             return Ok(responseMessage);
         }
 
-        /// <summary>
-        /// Save order.
-        /// </summary>
-        /// <param name="orderDto">A order dto.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> SaveAsync([FromBody] OrderDto orderDto)
@@ -65,11 +43,6 @@ namespace Product.Catalog.API.Controllers
             return Ok(orderDto.Id);
         }
 
-        /// <summary>
-        /// Get all orders for the current user.
-        /// </summary>
-        /// <param name="filter">Filter parameters.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpGet("MyOrders")]
         [Authorize]
         public async Task<IActionResult> MyOrdersAsync([FromQuery] TextFilterPaginationDTO filter)
@@ -86,11 +59,6 @@ namespace Product.Catalog.API.Controllers
             return Ok(booksDtos);
         }
 
-        /// <summary>
-        /// Get all orders.
-        /// </summary>
-        /// <param name="filter">Filter parameters.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpGet()]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
         public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)

@@ -7,24 +7,12 @@ using Products.Catalog.Infra.Authentication;
 
 namespace Product.Catalog.API.Controllers
 {
-    /// <summary>
-    /// Define API methods for Book.
-    /// </summary>
-    /// <param name="booksAppSerice">A books app service instance.</param>
     [ApiController]
     [Route("api/[controller]")]
     public class BooksController(IBooksAppService booksAppSerice) : ControllerBase
     {
-        /// <summary>
-        /// A book app service interface.
-        /// </summary>
         private readonly IBooksAppService _booksAppSerice = booksAppSerice;
 
-        /// <summary>
-        /// Get book informing the ID.
-        /// </summary>
-        /// <param name="id">A book ID.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
@@ -33,11 +21,6 @@ namespace Product.Catalog.API.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Delete book.
-        /// </summary>
-        /// <param name="id">A book id.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpDelete("{id}")]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
@@ -46,11 +29,6 @@ namespace Product.Catalog.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Save book.
-        /// </summary>
-        /// <param name="brandsIds">A list of brands ids.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpPost("Save")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveAsync([FromBody] BookDto bookDTO)
@@ -63,11 +41,6 @@ namespace Product.Catalog.API.Controllers
             return Ok(bookDTO);
         }
 
-        /// <summary>
-        /// Get all books.
-        /// </summary>
-        /// <param name="filter">Filter parameters.</param>
-        /// <returns>A http response with the status code.</returns>
         [HttpGet()]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
         public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)

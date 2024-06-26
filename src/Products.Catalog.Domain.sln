@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Product.Catalog.API", "Prod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products.Catalog.Application", "Products.Catalog.Application\Products.Catalog.Application.csproj", "{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Ports", "1 - Ports", "{48B68965-E712-4AAB-81D6-61531CC69414}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Service", "1 - Service", "{48B68965-E712-4AAB-81D6-61531CC69414}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Application", "2 - Application", "{F5A1A27A-35F3-48D9-A713-01DEFCF70195}"
 EndProject

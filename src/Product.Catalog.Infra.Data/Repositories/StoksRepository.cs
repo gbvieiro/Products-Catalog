@@ -4,19 +4,14 @@ using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {
-    /// <summary>
-    /// A stock repository definition.
-    /// </summary>
     public class StoksRepository : IStocksRepository
     {
-        /// <inheritdoc/>
         public Task DeleteAsync(Guid id)
         {
             Context.Stocks = new List<Stock>(Context.Stocks.Where(x => x.Id != id));
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public Task<IEnumerable<Stock>> GetAllAsync(string filter, int skip, int take)
         {
             if (Context.Stocks == null)
@@ -39,15 +34,12 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.FromResult(Context.Stocks.Skip(skip).Take(take));
         }
 
-        /// <inheritdoc/>
         public Task<Stock?> GetAsync(Guid id) =>
             Task.FromResult(Context.Stocks.FirstOrDefault(x => x.Id == id));
 
-        /// <inheritdoc/>
         public Task<Stock?> GetByBookId(Guid bookId) =>
             Task.FromResult(Context.Stocks.FirstOrDefault(x => x.BookId == bookId));
 
-        /// <inheritdoc/>
         public Task SaveAsync(Stock entity)
         {
             var savedEntityIndex = Context.Stocks.FindIndex(x => x.Id == entity.Id);

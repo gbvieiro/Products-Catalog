@@ -10,14 +10,8 @@ using Products.Catalog.Domain.Entities.Users;
 
 namespace Products.Catalog.Infra.Mapper
 {
-    /// <summary>
-    /// Define some custom profiles for this solution.
-    /// </summary>
     public class CustomProfile : Profile
     {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public CustomProfile()
         {
             CreateMap<ProductDTO, Product>().ReverseMap();
@@ -27,7 +21,7 @@ namespace Products.Catalog.Infra.Mapper
             CreateMap<StockDto, Stock>().ReverseMap();
             CreateMap<UserDto, User>();
             CreateMap<User, UserDto>()
-                .ForMember(x => x.Password, x => x.Ignore()); // Password is a sensitive information.
+                .ForMember(x => x.Password, x => x.Ignore());
         }
     }
 }

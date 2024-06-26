@@ -7,15 +7,10 @@ using System.Text;
 
 namespace Products.Catalog.Infra.Authentication
 {
-    /// <summary>
-    /// The authentication service.
-    /// </summary>
-    /// <param name="usersRepository">A user repository.</param>
     public class AuthenticationService(IUsersRepository usersRepository) : IAuthenticationService
     {
         private readonly IUsersRepository _usersRepository = usersRepository;
 
-        /// <inheritdoc/>
         public async Task<string> GenerateToken(AuthenticationModel userDto)
         {
             var  user = await _usersRepository.GetByEmailAsync(userDto.Email);
@@ -29,13 +24,6 @@ namespace Products.Catalog.Infra.Authentication
             return string.Empty;
         }
 
-        /// <summary>
-        /// Generates a new token.
-        /// </summary>
-        /// <param name="userId">A user id.</param>
-        /// <param name="userName">A user name.</param>
-        /// <param name="role">A user role.</param>
-        /// <returns>A token.</returns>
         private static string GenerateToken(string userId, string userName, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

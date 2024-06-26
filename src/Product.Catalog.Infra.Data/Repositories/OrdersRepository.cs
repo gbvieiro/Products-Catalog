@@ -4,12 +4,8 @@ using Products.Catalog.Domain.RepositoriesInterfaces;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {
-    /// <summary>
-    /// A order repository definition.
-    /// </summary>
     public class OrdersRepository : IOrderRepository
     {
-        /// <inheritdoc/>
         public Task DeleteAsync(Guid id)
         {
             Context.Orders = new List<Order>(Context.Orders.Where(x => x.Id !=id));
@@ -17,13 +13,11 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public Task<Order?> GetAsync(Guid id)
         {
             return Task.FromResult(Context.Orders.FirstOrDefault(x => x.Id == id));
         }
 
-        /// <inheritdoc/>
         public Task<IEnumerable<Order>> GetAllAsync(string filter, int skip, int take)
         {
             if (Context.Orders == null)
@@ -44,7 +38,6 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.FromResult(Context.Orders.Skip(skip).Take(take));
         }
 
-        /// <inheritdoc/>
         public Task SaveAsync(Order entity)
         {
             var savedEntityIndex = Context.Orders.FindIndex(x => x.Id == entity.Id);
@@ -58,7 +51,6 @@ namespace Product.Catalog.Infra.Data.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public Task<IEnumerable<Order>> GetAllAsync(string filter, int skip, int take, Guid userId)
         {
             if (Context.Orders == null)

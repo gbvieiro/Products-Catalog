@@ -5,24 +5,12 @@ using System.Security.Claims;
 
 namespace Product.Catalog.API.Controllers
 {
-    /// <summary>
-    /// Define API methods for Authentication.
-    /// </summary>
-    /// <param name="authenticationService">A authentication service instance.</param>
     [ApiController]
     [Route("api/[controller]")]
     public class AuthenticationController(IAuthenticationService authenticationService) : ControllerBase
     {
-        /// <summary>
-        /// A authentication service interface.
-        /// </summary>
         private readonly IAuthenticationService _authenticationService = authenticationService;
 
-        /// <summary>
-        /// Generates a new token.
-        /// </summary>
-        /// <param name="dto">Authentication model.</param>
-        /// <returns>A token.</returns>
         [HttpPost("GenerateToken")]
         [AllowAnonymous]
         public async Task<IActionResult> GenerateTokenAssync([FromBody] AuthenticationModel dto)
@@ -42,10 +30,6 @@ namespace Product.Catalog.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Get current user info from token.
-        /// </summary>
-        /// <returns>Current user information.</returns>
         [HttpGet("GetCurrentUserInfo"), Authorize]
         public IActionResult GetCurrentUserInfo()
         {
