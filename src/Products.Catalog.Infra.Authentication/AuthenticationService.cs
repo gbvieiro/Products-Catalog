@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.IdentityModel.Tokens;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

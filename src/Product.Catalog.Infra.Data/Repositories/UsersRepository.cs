@@ -1,6 +1,6 @@
 ﻿using Product.Catalog.Infra.Data.Database;
 using Products.Catalog.Domain.Entities.Users;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 
 namespace Product.Catalog.Infra.Data.Repositories
 {

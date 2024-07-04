@@ -3,7 +3,7 @@ using Products.Catalog.Domain.Validations;
 
 namespace Products.Catalog.Domain.Entities.Users
 {
-    public class User : IEntity<Guid>
+    public sealed class User : IEntity<Guid>
     {
         public Guid Id { get; private set; }
 

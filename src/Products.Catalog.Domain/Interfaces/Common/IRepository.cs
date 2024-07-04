@@ -1,6 +1,6 @@
 ﻿using Products.Catalog.Domain.Entities.Base;
 
-namespace Products.Catalog.Domain.RepositoriesInterfaces.Common
+namespace Products.Catalog.Domain.Interfaces.Common
 {
     public interface IRepository<EntityType, IdType> where EntityType : IEntity<IdType>
     {

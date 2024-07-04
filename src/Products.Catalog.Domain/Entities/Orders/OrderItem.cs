@@ -2,7 +2,7 @@
 
 namespace Products.Catalog.Domain.Entities.Orders
 {
-    public class OrderItem
+    public sealed class OrderItem
     {
         public Guid BookId { get; private set; }
 

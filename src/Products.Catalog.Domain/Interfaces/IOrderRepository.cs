@@ -1,7 +1,7 @@
 ﻿using Products.Catalog.Domain.Entities.Orders;
-using Products.Catalog.Domain.RepositoriesInterfaces.Common;
+using Products.Catalog.Domain.Interfaces.Common;
 
-namespace Products.Catalog.Domain.RepositoriesInterfaces
+namespace Products.Catalog.Domain.Interfaces
 {
     public interface IOrderRepository : IRepository<Order, Guid>
     {

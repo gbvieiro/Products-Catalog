@@ -3,7 +3,7 @@ using Products.Catalog.Domain.Validations;
 
 namespace Products.Catalog.Domain.Entities.Books
 {
-    public class Book : Product
+    public sealed class Book : Product
     {
         public string Title { get; private set; }
 

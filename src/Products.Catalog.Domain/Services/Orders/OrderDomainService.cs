@@ -1,5 +1,5 @@
 ﻿using Products.Catalog.Domain.Entities.Orders;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 using Products.Catalog.Domain.Validations;
 
 namespace Products.Catalog.Domain.Services.Orders
@@ -63,18 +63,12 @@ namespace Products.Catalog.Domain.Services.Orders
             return responses.ToArray();
         }
 
-        private async Task AddBookToStock(Guid bookId, int quantity)
+        public async Task AddBookToStock(Guid bookId, int quantity)
         {
-            var stock = await _stockRepository.GetByBookId(bookId);
-            if(stock == null)
-            {
-                throw new DomainExceptionValidation($"No stock found for book:{bookId}");
-            }
-
-            stock.AddBooksToStock(quantity);
+            
         }
 
-        private async Task ReserveBookFromStock(Guid bookId, int quantity)
+        public async Task ReserveBookFromStock(Guid bookId, int quantity)
         {
             var stock = await _stockRepository.GetByBookId(bookId);
             if (stock == null)
@@ -85,21 +79,6 @@ namespace Products.Catalog.Domain.Services.Orders
             stock.ReserveItems(quantity);
 
             await _stockRepository.SaveAsync(stock);
-        }
-
-        public async Task CancelOrderAsync(Order order)
-        {
-            order.SetStatus(OrderStatusEnum.Canceled);
-
-            var addBooksTasks = new List<Task>();
-            foreach (var orderItem in order.Items)
-            {
-                addBooksTasks.Add(AddBookToStock(orderItem.BookId, orderItem.Quantity));
-            }
-
-            await Task.WhenAll(addBooksTasks);
-
-            await _orderRepository.SaveAsync(order);
         }
     }
 }

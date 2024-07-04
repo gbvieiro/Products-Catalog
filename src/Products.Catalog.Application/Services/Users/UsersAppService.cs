@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Domain.Entities.Users;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 
 namespace Products.Catalog.Application.Services.Users
 {

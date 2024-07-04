@@ -4,7 +4,7 @@ using Products.Catalog.Application.Services.Books;
 using Products.Catalog.Application.Services.Orders;
 using Products.Catalog.Application.Services.Stocks;
 using Products.Catalog.Application.Services.Users;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 using Products.Catalog.Domain.Services.Orders;
 using Products.Catalog.Infra.Authentication;
 

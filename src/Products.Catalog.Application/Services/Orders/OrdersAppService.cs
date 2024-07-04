@@ -1,7 +1,7 @@
 using AutoMapper;
 using Products.Catalog.Application.DTOs;
 using Products.Catalog.Domain.Entities.Orders;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 using Products.Catalog.Domain.Services.Orders;
 
 namespace Products.Catalog.Application.Services.Orders

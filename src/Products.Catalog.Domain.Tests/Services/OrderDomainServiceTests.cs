@@ -3,7 +3,7 @@ using Moq;
 using Products.Catalog.Domain.Entities.Books;
 using Products.Catalog.Domain.Entities.Orders;
 using Products.Catalog.Domain.Entities.Stocks;
-using Products.Catalog.Domain.RepositoriesInterfaces;
+using Products.Catalog.Domain.Interfaces;
 using Products.Catalog.Domain.Services.Orders;
 using Products.Catalog.Domain.Validations;
 using Xunit;

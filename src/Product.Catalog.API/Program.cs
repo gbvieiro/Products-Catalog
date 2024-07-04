@@ -1,12 +1,20 @@
+using Microsoft.AspNetCore.Hosting;
+using Product.Catalog.API;
 using Product.Catalog.Infra.IOC;
 using Products.Catalog.Infra.Authentication;
 using Products.Catalog.Infra.Mapper;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure();
 builder.Services.AddMapperService();
 builder.Services.AddCors();
+
+builder.Services.AddMediatR(cfg => {
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuthorizeButton(

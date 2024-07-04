@@ -3,7 +3,7 @@ using Products.Catalog.Domain.Validations;
 
 namespace Products.Catalog.Domain.Entities.Stocks
 {
-    public class Stock : IEntity<Guid>
+    public sealed class Stock : IEntity<Guid>
     {
         public Guid Id { get; private set; }
 
