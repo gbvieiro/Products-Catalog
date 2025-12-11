@@ -10,7 +10,6 @@ public class User : Entity
     public string Password { get; private set; }
     public string Role { get; private set; }
 
-    // Construtor sem parâmetros para o Entity Framework Core
     protected User()
     {
         Email = new Email(string.Empty);

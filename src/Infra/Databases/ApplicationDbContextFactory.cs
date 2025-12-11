@@ -9,11 +9,8 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         
-        // Para design-time (geração de migrations), usar SQL Server
-        // A connection string será configurada no appsettings.json em runtime
-        // Por enquanto, usando uma connection string padrão para design-time
-        optionsBuilder.UseSqlServer(
-            "Server=(localdb)\\mssqllocaldb;Database=ProductsCatalogDb;Trusted_Connection=true;MultipleActiveResultSets=true",
+        optionsBuilder.UseNpgsql(
+            "Host=localhost;Port=5432;Database=product_catalog;Username=postgres;Password=admin",
             b => b.MigrationsAssembly("Infra")
         );
 

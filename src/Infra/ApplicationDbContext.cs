@@ -21,7 +21,6 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configuração da entidade Book
         modelBuilder.Entity<Book>(entity =>
         {
             entity.ToTable("Books");
@@ -51,14 +50,12 @@ public class ApplicationDbContext : DbContext
                 .IsRequired();
         });
 
-        // Configuração da entidade User
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("Users");
             
             entity.HasKey(u => u.Id);
             
-            // Configurar Email como owned entity
             entity.OwnsOne(u => u.Email, email =>
             {
                 email.Property(e => e.Address)
@@ -66,7 +63,6 @@ public class ApplicationDbContext : DbContext
                     .IsRequired()
                     .HasMaxLength(255);
                 
-                // Índice único para Email (dentro do owned entity)
                 email.HasIndex(e => e.Address)
                     .IsUnique();
             });
@@ -86,7 +82,6 @@ public class ApplicationDbContext : DbContext
                 .IsRequired();
         });
 
-        // Configuração da entidade Stock
         modelBuilder.Entity<Stock>(entity =>
         {
             entity.ToTable("Stocks");
@@ -105,18 +100,15 @@ public class ApplicationDbContext : DbContext
             entity.Property(s => s.UpdateAt)
                 .IsRequired();
             
-            // Relacionamento com Book
             entity.HasOne<Book>()
                 .WithMany()
                 .HasForeignKey(s => s.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
             
-            // Índice único para BookId (um estoque por livro)
             entity.HasIndex(s => s.BookId)
                 .IsUnique();
         });
 
-        // Configuração da entidade Order
         modelBuilder.Entity<Order>(entity =>
         {
             entity.ToTable("Orders");
@@ -140,37 +132,30 @@ public class ApplicationDbContext : DbContext
             entity.Property(o => o.UpdateAt)
                 .IsRequired();
             
-            // Relacionamento com User (Customer)
             entity.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(o => o.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
             
-            // Relacionamento com OrderItems
             entity.HasMany(o => o.Items)
                 .WithOne()
                 .HasForeignKey("OrderId")
                 .OnDelete(DeleteBehavior.Cascade);
             
-            // Índice para CustomerId para melhor performance em consultas
             entity.HasIndex(o => o.CustomerId);
             
-            // Índice para Status
             entity.HasIndex(o => o.Status);
         });
 
-        // Configuração da entidade OrderItem
         modelBuilder.Entity<OrderItem>(entity =>
         {
             entity.ToTable("OrderItems");
             
-            // Shadow property para Id (já que OrderItem não herda de Entity)
             entity.Property<Guid>("Id")
                 .IsRequired();
             
             entity.HasKey("Id");
             
-            // Shadow property para OrderId (relacionamento com Order)
             entity.Property<Guid>("OrderId")
                 .IsRequired();
             
@@ -182,15 +167,13 @@ public class ApplicationDbContext : DbContext
             
             entity.Property(oi => oi.Amount)
                 .IsRequired()
-                .HasPrecision(18, 2);
+                    .HasPrecision(18, 2);
             
-            // Relacionamento com Book
             entity.HasOne<Book>()
                 .WithMany()
                 .HasForeignKey(oi => oi.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
             
-            // Índice para OrderId (shadow property) para melhor performance
             entity.HasIndex("OrderId");
         });
     }

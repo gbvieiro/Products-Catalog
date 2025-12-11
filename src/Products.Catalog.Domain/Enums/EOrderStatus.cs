@@ -1,9 +1,8 @@
-﻿namespace Products.Catalog.Domain.Enums
+﻿namespace Products.Catalog.Domain.Enums;
+
+public enum EOrderStatus
 {
-    public enum EOrderStatus
-    {
-        Created = 1,
-        Confirmed = 2,
-        Canceled = 3
-    }
+    Created = 1,
+    Confirmed = 2,
+    Canceled = 3
 }

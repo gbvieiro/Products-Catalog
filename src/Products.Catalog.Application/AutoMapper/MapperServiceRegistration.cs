@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Products.Catalog.Infra.Mapper;
+namespace Products.Catalog.Application.AutoMapper;
 
 public static class MapperServiceRegistration
 {
@@ -10,5 +10,5 @@ public static class MapperServiceRegistration
         {
             cfg.AddProfile<CustomProfile>();
         });
-}
+    }
 }

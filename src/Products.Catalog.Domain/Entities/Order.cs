@@ -6,7 +6,6 @@ namespace Products.Catalog.Domain.Entities;
 
 public class Order : Entity
 {
-    // Construtor sem parâmetros para o Entity Framework Core
     protected Order()
     {
         CustomerId = Guid.Empty;

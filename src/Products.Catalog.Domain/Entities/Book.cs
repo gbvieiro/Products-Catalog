@@ -10,7 +10,6 @@ public class Book : Product
     public string Author { get; private set; }
     public EBookGenre Genre { get; private set; }
 
-    // Construtor sem parâmetros para o Entity Framework Core
     protected Book() : base()
     {
         Title = string.Empty;

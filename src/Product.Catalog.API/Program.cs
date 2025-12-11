@@ -1,12 +1,12 @@
+using Microsoft.OpenApi.Models;
+using Products.Catalog.Application;
+using Products.Catalog.Application.AutoMapper;
 using Product.Catalog.Infra.IOC;
-using Products.Catalog.Infra.Authentication;
-using Products.Catalog.Infra.Mapper;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterApplication();
-builder.Services.RegisterAuthentication();
 builder.Services.RegisterInfra(builder.Configuration);
 builder.Services.AddMapperService();
 builder.Services.AddCors();
@@ -17,17 +17,21 @@ builder.Services.AddMediatR(cfg => {
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerWithAuthorizeButton(
-    "Books Catalog",
-    "This is a book catalog.",
-    "v1",
-    "Gabriel Menegazzi Vieiro",
-    "gbvieiro@gmail.com",
-    "https://www.linkedin.com/in/gbvieiro/",
-    "ProductCatalogToken",
-    "Authorization"
-);
-builder.Services.AddJWTAuthentication();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Books Catalog",
+        Version = "v1",
+        Description = "This is a book catalog.",
+        Contact = new OpenApiContact()
+        {
+            Name = "Gabriel Menegazzi Vieiro",
+            Email = "gbvieiro@gmail.com",
+            Url = new Uri("https://www.linkedin.com/in/gbvieiro/")
+        }
+    });
+});
 
 var app = builder.Build();
 

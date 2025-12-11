@@ -1,75 +1,40 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Products.Catalog.Application.DTOs.Filters;
-using Products.Catalog.Application.DTOs.Stocks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Products.Catalog.Application.DTOs;
 using Products.Catalog.Application.Services.Stocks;
-using Products.Catalog.Infra.Authentication;
 
-namespace Product.Catalog.API.Controllers
+namespace API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class StocksController(IStocksAppService stocksAppService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class StocksController(IStocksAppService stocksAppService) : ControllerBase
+    [HttpGet("{id}")]
+    public async Task<StockDto?> ReadAsync([FromRoute] Guid id)
     {
-        private readonly IStocksAppService _stocksAppService = stocksAppService;
+        return await stocksAppService.ReadAsync(id);
+    }
 
-        [HttpGet("{id}")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
-        public async Task<IActionResult> GetAsync([FromRoute] Guid id)
-        {
-            var stockDto = await _stocksAppService.GetAsync(id);
-            return Ok(stockDto);
-        }
+    [HttpGet("book/{bookId}")]
+    public async Task<CompleteStockDto?> GetByBookIdAsync([FromRoute] Guid bookId)
+    {
+        return await stocksAppService.GetStockByBookId(bookId);
+    }
 
-        [HttpGet("book/{bookId}")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
-        public async Task<IActionResult> GetByBookIdAsync([FromRoute] Guid bookId)
-        {
-            var stockDto = await _stocksAppService.GetStockByBookId(bookId);
-            return Ok(stockDto);
-        }
+    [HttpPut("book/{bookId}/AddBooks")]
+    public async Task<string> AddBooksAsync([FromRoute] Guid bookId, [FromBody] AddStockDto dto)
+    {
+        return await stocksAppService.AddItemsToStock(bookId, dto.Quantity);
+    }
 
-        [HttpPut("book/{bookId}/AddBooks")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
-        public async Task<IActionResult> AddBooksAsync([FromRoute] Guid bookId, [FromBody] AddStockDto dto)
-        {
-            if (dto == null)
-            {
-                return BadRequest();
-            }
+    [HttpPost("create")]
+    public async Task<Guid> CreateAsync([FromBody] StockDto stockDto)
+    {
+        return await stocksAppService.CreateAsync(stockDto);
+    }
 
-            var responseMessage = await _stocksAppService.AddItemsToStock(bookId, dto.Quantity);
-            return Ok(responseMessage);
-        }
-
-        [HttpPost("Save")]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
-        public async Task<IActionResult> SaveAsync([FromBody] StockDto stockDto)
-        {
-            if (stockDto == null)
-            {
-                return BadRequest();
-            }
-
-            await _stocksAppService.SaveAsync(stockDto);
-
-            return Ok(stockDto.Id);
-        }
-
-        [HttpGet()]
-        [Authorize(Roles = $"{AuthenticationConfigs.Admin},{AuthenticationConfigs.Seller}")]
-        public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)
-        {
-            if (filter == null)
-            {
-                return BadRequest();
-            }
-
-            var dtos = await _stocksAppService.GetAllAsync(
-                filter.Text ?? string.Empty, filter.Skip, filter.Take
-            );
-
-            return Ok(dtos);
-        }
+    [HttpGet()]
+    public async Task<IReadOnlyCollection<StockDto>> FindAsync([FromQuery] TextFilterDto filter)
+    {
+        return await stocksAppService.FindAsync(filter.Text ?? "");
     }
 }

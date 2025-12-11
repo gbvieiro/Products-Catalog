@@ -1,6 +1,5 @@
-﻿namespace Products.Catalog.Application.UseCases.AddOrder
+﻿namespace Products.Catalog.Application.UseCases.CreateOrder;
+
+public class CreateOrderHandler
 {
-    public class CreateOrderHandler
-    {
-    }
 }

@@ -1,23 +1,27 @@
 ﻿using AutoMapper;
 using Products.Catalog.Application.DTOs;
-using Products.Catalog.Application.DTOs.Common;
-using Products.Catalog.Application.DTOs.Stocks;
 using Products.Catalog.Domain.Entities;
+using Products.Catalog.Domain.ValueObject;
 
-namespace Products.Catalog.Infra.Mapper
+namespace Products.Catalog.Application.AutoMapper;
+
+public class CustomProfile : Profile
 {
-    public class CustomProfile : Profile
+    public CustomProfile()
     {
-        public CustomProfile()
-        {
-            CreateMap<ProductDTO, Shared.Entities.Product>().ReverseMap();
-            CreateMap<BookDto, Book>().ReverseMap();
-            CreateMap<OrderDto, Order>().ReverseMap();
-            CreateMap<OrderItemDto, OrderItem>().ReverseMap();
-            CreateMap<StockDto, Stock>().ReverseMap();
-            CreateMap<UserDto, User>();
-            CreateMap<User, UserDto>()
-                .ForMember(x => x.Password, x => x.Ignore());
-        }
+        CreateMap<ProductDto, Shared.Entities.Product>().ReverseMap();
+        CreateMap<BookDto, Book>().ReverseMap();
+        CreateMap<OrderDto, Order>().ReverseMap();
+        CreateMap<OrderItemDto, OrderItem>().ReverseMap();
+        CreateMap<StockDto, Stock>().ReverseMap();
+
+        CreateMap<UserDto, User>()
+            .ConstructUsing(src => new User(new Email(src.Email), src.Password, src.Role))
+            .ForMember(dest => dest.Email, opt => opt.Ignore())
+            .ForMember(dest => dest.Password, opt => opt.Ignore())
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
+
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Address));
     }
 }

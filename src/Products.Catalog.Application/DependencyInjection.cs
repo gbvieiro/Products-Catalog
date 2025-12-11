@@ -4,7 +4,7 @@ using Products.Catalog.Application.Services.Orders;
 using Products.Catalog.Application.Services.Stocks;
 using Products.Catalog.Application.Services.Users;
 
-namespace Product.Catalog.Infra.IOC;
+namespace Products.Catalog.Application;
 
 public static class DependencyInjection
 {

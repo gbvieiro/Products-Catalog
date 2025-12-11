@@ -24,10 +24,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Products.Catalog.Domain\Domain.csproj" />
+    <ProjectReference Include="..\Products.Catalog.Application\Application.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <PackageReference Include="AutoMapper" Version="16.0.0" />
   </ItemGroup>
+
 
 </Project>

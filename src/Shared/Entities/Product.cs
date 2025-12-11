@@ -2,7 +2,6 @@
 
 public abstract class Product(double price) : Entity
 {
-    // Construtor sem parâmetros para o Entity Framework Core
     protected Product() : this(0)
     {
     }

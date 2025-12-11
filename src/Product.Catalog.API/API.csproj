@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Infra\Infra.csproj" />
     <ProjectReference Include="..\Products.Catalog.Application\Application.csproj" />
-    <ProjectReference Include="..\Products.Catalog.Infra.Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 

@@ -11,11 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "Product.Catalog.API\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Products.Catalog.Application\Application.csproj", "{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication", "Products.Catalog.Infra.Authentication\Authentication.csproj", "{FB9CE52E-4183-4FFB-90A0-63309B341321}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{F96BAD95-3B09-461A-87DB-45FE1E70CA89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "Infra\Infra.csproj", "{06625785-2114-4B9C-9326-579B22B6B1E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infra", "Infra\Infra.csproj", "{06625785-2114-4B9C-9326-579B22B6B1E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +37,6 @@ Global
 		{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EA99E4F-3924-4603-A733-90F8D1AAE1A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB9CE52E-4183-4FFB-90A0-63309B341321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB9CE52E-4183-4FFB-90A0-63309B341321}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB9CE52E-4183-4FFB-90A0-63309B341321}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB9CE52E-4183-4FFB-90A0-63309B341321}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F96BAD95-3B09-461A-87DB-45FE1E70CA89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F96BAD95-3B09-461A-87DB-45FE1E70CA89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F96BAD95-3B09-461A-87DB-45FE1E70CA89}.Release|Any CPU.ActiveCfg = Release|Any CPU

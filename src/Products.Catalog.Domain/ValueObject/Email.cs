@@ -4,7 +4,6 @@ namespace Products.Catalog.Domain.ValueObject;
 
 public class Email(string address)
 {
-    // Construtor sem parâmetros para o Entity Framework Core
     public Email() : this(string.Empty)
     {
     }

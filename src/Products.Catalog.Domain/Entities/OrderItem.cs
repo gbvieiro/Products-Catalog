@@ -8,7 +8,6 @@ public sealed class OrderItem
     public int Quantity { get; private set; }
     public double Amount { get; private set; }
 
-    // Construtor sem parâmetros para o Entity Framework Core
     public OrderItem()
     {
         BookId = Guid.Empty;

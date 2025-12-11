@@ -8,7 +8,6 @@ public class Stock : Entity
     public int Quantity { get; private set; }
     public Guid BookId { get; private set; }
 
-    // Construtor sem parâmetros para o Entity Framework Core
     protected Stock()
     {
         Quantity = 0;
