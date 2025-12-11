@@ -104,4 +104,3 @@ public class BooksAppServiceTests
         result.Should().HaveCount(2);
     }
 }
-
