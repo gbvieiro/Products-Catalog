@@ -1,9 +1,8 @@
-﻿using Products.Catalog.Domain.Entities.Books;
-using Products.Catalog.Domain.Interfaces.Common;
+﻿using Products.Catalog.Domain.Entities;
 
 namespace Products.Catalog.Domain.Interfaces
 {
-    public interface IBooksRepository : IRepository<Book, Guid> 
+    public interface IBooksRepository : IRepository<Book> 
     {
         Task<double> GetBookPrice(Guid id);
     }

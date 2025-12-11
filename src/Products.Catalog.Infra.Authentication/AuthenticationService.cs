@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.IdentityModel.Tokens;
+using Products.Catalog.Domain.Entities;
 using Products.Catalog.Domain.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,13 +8,14 @@ using System.Text;
 
 namespace Products.Catalog.Infra.Authentication
 {
-    public class AuthenticationService(IUsersRepository usersRepository) : IAuthenticationService
+    public class AuthenticationService(IRepository<User> usersRepository) : IAuthenticationService
     {
-        private readonly IUsersRepository _usersRepository = usersRepository;
+        private readonly IRepository<User> _usersRepository = usersRepository;
 
         public async Task<string> GenerateToken(AuthenticationModel userDto)
         {
-            var  user = await _usersRepository.GetByEmailAsync(userDto.Email);
+            var allUsers = await _usersRepository.FindAsync(string.Empty, 0, int.MaxValue);
+            var user = allUsers.FirstOrDefault(u => u.Email.Address == userDto.Email);
 
             if (user == null)
                 return string.Empty;

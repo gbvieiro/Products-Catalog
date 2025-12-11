@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Product.Catalog.API;
 using Product.Catalog.Infra.IOC;
 using Products.Catalog.Infra.Authentication;
 using Products.Catalog.Infra.Mapper;
@@ -7,7 +5,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddInfrastructure();
+builder.Services.RegisterApplication();
+builder.Services.RegisterAuthentication();
+builder.Services.RegisterInfra(builder.Configuration);
 builder.Services.AddMapperService();
 builder.Services.AddCors();
 
@@ -22,7 +22,7 @@ builder.Services.AddSwaggerWithAuthorizeButton(
     "This is a book catalog.",
     "v1",
     "Gabriel Menegazzi Vieiro",
-    "'gbvieiro@gmail.com",
+    "gbvieiro@gmail.com",
     "https://www.linkedin.com/in/gbvieiro/",
     "ProductCatalogToken",
     "Authorization"
@@ -32,7 +32,10 @@ builder.Services.AddJWTAuthentication();
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Books Catalog v1");
+});
 app.UseHttpsRedirection();
 app.UseCors(cors => { cors.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
 app.UseAuthentication();

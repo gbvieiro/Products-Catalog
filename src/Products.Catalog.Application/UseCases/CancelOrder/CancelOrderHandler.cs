@@ -1,18 +1,19 @@
 ﻿using MediatR;
-using Products.Catalog.Domain.Entities.Orders;
+using Products.Catalog.Domain.Entities;
+using Products.Catalog.Domain.Enums;
 using Products.Catalog.Domain.Interfaces;
 using Products.Catalog.Domain.Validations;
 
 namespace Products.Catalog.Application.UseCases.CancelOrder
 {
-    public class CancelOrderHandler(IOrderRepository orderRepository, IStocksRepository stockRepository) : IRequestHandler<CancelOrderRequest, CancelOrderResponse>
+    public class CancelOrderHandler(IRepository<Order> orderRepository, IRepository<Stock> stockRepository) : IRequestHandler<CancelOrderRequest, CancelOrderResponse>
     {
-        private readonly IOrderRepository _orderRepository = orderRepository;
-        private readonly IStocksRepository _stockRepository = stockRepository;
+        private readonly IRepository<Order> _orderRepository = orderRepository;
+        private readonly IRepository<Stock> _stockRepository = stockRepository;
 
         public async Task<CancelOrderResponse> Handle(CancelOrderRequest request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
+            var order = await _orderRepository.ReadAsync(request.OrderId);
 
             if(order == null)
             {
@@ -23,7 +24,7 @@ namespace Products.Catalog.Application.UseCases.CancelOrder
                 };
             }
 
-            order.SetStatus(OrderStatusEnum.Canceled);
+            order.SetStatus(EOrderStatus.Canceled);
 
             var addBooksTasks = new List<Task>();
 
@@ -37,7 +38,7 @@ namespace Products.Catalog.Application.UseCases.CancelOrder
 
             await Task.WhenAll(addBooksTasks);
 
-            await _orderRepository.SaveAsync(order);
+            await _orderRepository.UpdateAsync(order.Id, order);
 
             return new CancelOrderResponse()
             {
@@ -48,13 +49,16 @@ namespace Products.Catalog.Application.UseCases.CancelOrder
 
         public async Task AddBookToStock(Guid bookId, int quantity)
         {
-            var stock = await _stockRepository.GetByBookId(bookId);
+            var allStocks = await _stockRepository.FindAsync(string.Empty, 0, int.MaxValue);
+            var stock = allStocks.FirstOrDefault(s => s.BookId == bookId);
+            
             if (stock == null)
             {
-                throw new DomainExceptionValidation($"No stock found for book: {bookId}");
+                throw new DomainException($"No stock found for book: {bookId}");
             }
 
             stock.AddBooksToStock(quantity);
+            await _stockRepository.UpdateAsync(stock.Id, stock);
         }
     }
 }

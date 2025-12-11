@@ -1,0 +1,35 @@
+﻿namespace Products.Catalog.Domain.Enums;
+
+public enum EBookGenre
+{
+    Fiction,
+    NonFiction,
+    Mystery,
+    Fantasy,
+    ScienceFiction,
+    Biography,
+    SelfHelp,
+    Romance,
+    Historical,
+    Thriller,
+    Horror,
+    Poetry,
+    YoungAdult,
+    Children,
+    Drama,
+    Adventure,
+    GraphicNovel,
+    Classic,
+    Cookbook,
+    Spirituality,
+    Science,
+    History,
+    Travel,
+    Art,
+    Psychology,
+    Philosophy,
+    Education,
+    Music,
+    Health,
+    Business
+}

@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Products.Catalog.Application.DTOs;
-using Products.Catalog.Domain.Entities.Users;
+using Products.Catalog.Domain.Entities;
 using Products.Catalog.Domain.Interfaces;
 
 namespace Products.Catalog.Application.Services.Users
 {
-    public class UsersAppService(IUsersRepository usersRepository, IMapper mapper) : IUsersAppService
+    public class UsersAppService(IRepository<User> usersRepository, IMapper mapper) : IUsersAppService
     {
-        private readonly IUsersRepository _usersRepository = usersRepository;
+        private readonly IRepository<User> _usersRepository = usersRepository;
 
         private readonly IMapper _mapper = mapper;
 
@@ -15,22 +15,31 @@ namespace Products.Catalog.Application.Services.Users
 
         public async Task<List<UserDto>> GetAllAsync(string filtertext, int skip, int take)
         {
-            var users = await _usersRepository.GetAllAsync(filtertext, skip, take);
+            var users = await _usersRepository.FindAsync(filtertext, skip, take);
             return _mapper.Map<List<UserDto>>(users.ToList());
         }
 
         public async Task<UserDto?> GetAsync(Guid id)
         {
-            var user = await _usersRepository.GetAsync(id);
+            var user = await _usersRepository.ReadAsync(id);
             return user != null ? _mapper.Map<UserDto>(user) : default;
         }
 
-        public Task SaveAsync(UserDto dto)
+        public async Task SaveAsync(UserDto dto)
         {
             ArgumentNullException.ThrowIfNull(dto);
             dto.GenerateId();
             var user = _mapper.Map<User>(dto);
-            return _usersRepository.SaveAsync(user);
+            
+            var existingUser = await _usersRepository.ReadAsync(user.Id);
+            if (existingUser == null)
+            {
+                await _usersRepository.CreateAsync(user);
+            }
+            else
+            {
+                await _usersRepository.UpdateAsync(user.Id, user);
+            }
         }
     }
 }

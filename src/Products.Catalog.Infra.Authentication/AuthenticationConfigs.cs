@@ -65,10 +65,11 @@ namespace Products.Catalog.Infra.Authentication
                 var scheme = new OpenApiSecurityScheme()
                 {
                     Name = headerName,
-                    Type = SecuritySchemeType.ApiKey,
+                    Type = SecuritySchemeType.Http,
                     In = ParameterLocation.Header,
-                    Scheme = schemeName,
-                    BearerFormat = "String"
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below."
                 };
 
                 var reference = new OpenApiSecurityScheme
@@ -76,11 +77,11 @@ namespace Products.Catalog.Infra.Authentication
                     Reference = new OpenApiReference
                     {
                         Type = ReferenceType.SecurityScheme,
-                        Id = schemeName
+                        Id = "Bearer"
                     }
                 };
 
-                c.AddSecurityDefinition(schemeName, scheme);
+                c.AddSecurityDefinition("Bearer", scheme);
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { reference, Array.Empty<string>() } });
             });
         }

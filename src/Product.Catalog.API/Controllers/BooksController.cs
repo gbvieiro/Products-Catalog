@@ -13,12 +13,36 @@ namespace Product.Catalog.API.Controllers
     {
         private readonly IBooksAppService _booksAppSerice = booksAppSerice;
 
+        [HttpPost("Create")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> CreateAsync([FromBody] BookDto bookDTO)
+        {
+            if (bookDTO == null)
+                return BadRequest();
+
+            await _booksAppSerice.SaveAsync(bookDTO);
+
+            return Ok(bookDTO);
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
-        public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+        public async Task<IActionResult> ReadAsync([FromRoute] Guid id)
         {
             var dto = await _booksAppSerice.GetAsync(id);
             return Ok(dto);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] BookDto bookDTO)
+        {
+            if (bookDTO == null)
+                return BadRequest();
+
+            await _booksAppSerice.SaveAsync(bookDTO);
+
+            return Ok(bookDTO);
         }
 
         [HttpDelete("{id}")]
@@ -29,21 +53,9 @@ namespace Product.Catalog.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("Save")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> SaveAsync([FromBody] BookDto bookDTO)
-        {
-            if (bookDTO == null)
-                return BadRequest();
-
-            await _booksAppSerice.SaveAsync(bookDTO);
-
-            return Ok(bookDTO);
-        }
-
         [HttpGet()]
         [Authorize(Roles = $"{AuthenticationConfigs.Admin}")]
-        public async Task<IActionResult> GetAllAsync([FromQuery] TextFilterPaginationDTO filter)
+        public async Task<IActionResult> FindAsync([FromQuery] TextFilterPaginationDTO filter)
         {
             if (filter == null)
                 return BadRequest();
