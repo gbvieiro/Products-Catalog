@@ -18,10 +18,10 @@ public class OrdersController(ISender sender) : ControllerBase
     public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateOrderCommand command)
     {
         var id = await sender.Send(command);
-        return CreatedAtAction(nameof(ReadAsync), new { id }, id);
+        return CreatedAtRoute("GetOrderById", new { id }, id);
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetOrderById")]
     public async Task<ActionResult<OrderDto>> ReadAsync(Guid id)
     {
         var order = await sender.Send(new GetOrderByIdQuery(id));

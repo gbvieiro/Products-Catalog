@@ -16,10 +16,10 @@ public class UsersController(ISender sender) : ControllerBase
     public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateUserCommand command)
     {
         var id = await sender.Send(command);
-        return CreatedAtAction(nameof(ReadAsync), new { id }, id);
+        return CreatedAtRoute("GetUserById", new { id }, id);
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetUserById")]
     public async Task<ActionResult<UserDto>> ReadAsync(Guid id)
     {
         var user = await sender.Send(new GetUserByIdQuery(id));

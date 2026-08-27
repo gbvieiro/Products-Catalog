@@ -21,10 +21,10 @@ public class BooksController(ISender sender) : ControllerBase
     public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateBookCommand command)
     {
         var id = await sender.Send(command);
-        return CreatedAtAction(nameof(ReadAsync), new { id }, id);
+        return CreatedAtRoute("GetBookById", new { id }, id);
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetBookById")]
     public async Task<ActionResult<BookDto>> ReadAsync(Guid id)
     {
         var book = await sender.Send(new GetBookByIdQuery(id));

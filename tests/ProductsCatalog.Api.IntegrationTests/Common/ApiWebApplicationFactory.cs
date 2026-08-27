@@ -21,6 +21,19 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly string _databaseName = $"IntegrationTests-{Guid.NewGuid()}";
 
+    // xUnit roda classes de teste em paralelo por padrao, e cada classe de
+    // integracao cria a sua propria ApiWebApplicationFactory. Quando o banco
+    // real (Postgres) e usado - via ConnectionStrings__DefaultConnection,
+    // como no docker-compose - todas as instancias apontam para o MESMO
+    // banco fisico. EnsureCreated() nao e thread-safe/process-safe: duas
+    // factories chamando-o ao mesmo tempo podem colidir tentando criar os
+    // mesmos tipos/tabelas, causando erros como
+    // "duplicate key value violates unique constraint pg_type_typname_nsp_index".
+    // O semaforo estatico serializa a criacao do schema entre todas as
+    // instancias do processo de teste; como EnsureCreated() e idempotente,
+    // as chamadas subsequentes apenas confirmam que o schema ja existe.
+    private static readonly SemaphoreSlim SchemaCreationLock = new(1, 1);
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         var hasRealConnectionString = !string.IsNullOrWhiteSpace(
@@ -53,9 +66,22 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
         // Nao ha migrations geradas ainda (ver tests/.../Persistence/Migrations/README.md),
         // entao criamos o schema direto a partir do modelo atual. Funciona tanto para
         // InMemory quanto para um Postgres/SqlServer real.
-        using var scope = host.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureCreated();
+        //
+        // O lock abaixo evita a corrida entre factories concorrentes descrita
+        // no comentario de SchemaCreationLock. Para o InMemory ele e inofensivo
+        // (cada factory tem seu proprio banco, entao nunca ha contencao real),
+        // mas mante-lo tambem nesse caminho simplifica o codigo.
+        SchemaCreationLock.Wait();
+        try
+        {
+            using var scope = host.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            context.Database.EnsureCreated();
+        }
+        finally
+        {
+            SchemaCreationLock.Release();
+        }
 
         return host;
     }
