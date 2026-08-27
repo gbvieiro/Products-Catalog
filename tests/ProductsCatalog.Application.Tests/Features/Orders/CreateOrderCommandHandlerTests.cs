@@ -6,6 +6,7 @@ using ProductsCatalog.Domain.Entities;
 using ProductsCatalog.Domain.Enums;
 using ProductsCatalog.Domain.Exceptions;
 using ProductsCatalog.Domain.Repositories;
+using ProductsCatalog.Domain.ValueObjects;
 using Xunit;
 
 namespace ProductsCatalog.Application.Tests.Features.Orders;
@@ -15,9 +16,20 @@ public class CreateOrderCommandHandlerTests
     private readonly Mock<IOrderRepository> _orderRepository = new();
     private readonly Mock<IBookRepository> _bookRepository = new();
     private readonly Mock<IStockRepository> _stockRepository = new();
+    private readonly Mock<ICustomerRepository> _customerRepository = new();
+
+    public CreateOrderCommandHandlerTests()
+    {
+        // Por padrao, qualquer customerId resolve para um cliente valido -
+        // os testes que nao se importam com o cliente em si nao precisam
+        // repetir esse setup.
+        _customerRepository
+            .Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Customer("Jane Doe", new Email("jane.doe@example.com")));
+    }
 
     private CreateOrderCommandHandler CreateHandler() =>
-        new(_orderRepository.Object, _bookRepository.Object, _stockRepository.Object);
+        new(_orderRepository.Object, _bookRepository.Object, _stockRepository.Object, _customerRepository.Object);
 
     [Fact]
     public async Task Handle_WithEnoughStock_ReservesStockAndCreatesOrder()

@@ -20,29 +20,33 @@ Sem dependencia de framework (a unica excecao consciente e o pacote MediatR,
 usado so pelos marker interfaces `INotification`/`IRequest` para expressar
 Domain Events - nenhum `IMediator` e usado aqui).
 
-- **Entities/**: `Book`, `Order`, `OrderItem`, `Stock`, `User`, alem das
-  bases `Product` e (em `Common/`) `BaseEntity`. Toda mutacao de estado passa
-  por um metodo com regra de negocio (`Book.Update`, `Stock.Reserve`,
-  `Order.Cancel`, etc.) - nunca um setter publico.
+- **Entities/**: `Book`, `Customer`, `Order`, `OrderItem`, `Stock`, `User`,
+  alem das bases `Product` e (em `Common/`) `BaseEntity`. Toda mutacao de
+  estado passa por um metodo com regra de negocio (`Book.Update`,
+  `Stock.Reserve`, `Order.Cancel`, etc.) - nunca um setter publico.
+  `Customer` e `User` sao conceitos separados de proposito: `User` e uma
+  conta com login (email/senha/role - ver secao "Autenticacao e autorizacao"
+  abaixo), `Customer` e so quem recebe/paga um pedido, sem conta/login
+  proprio - so precisa existir como cadastro.
 - **ValueObjects/**: `Email` (imutavel, valida formato).
 - **Events/**: `BaseDomainEvent`, `OrderCreatedEvent`, `OrderCanceledEvent`.
   Entidades acumulam eventos (`AddDomainEvent`) que sao publicados pela
   Infrastructure logo apos o `SaveChanges` ter sucesso (ver mais abaixo).
-- **Enums/**: `EBookGenre`, `EOrderStatus`.
+- **Enums/**: `EBookGenre`, `EOrderStatus`, `ERole` (`Administrator`/`Seller` - ver abaixo).
 - **Exceptions/**: `DomainException` - violacao de regra de negocio.
 - **Specifications/**: `ISpecification<T>`/`BaseSpecification<T>` (padrao
   Specification) + uma especificacao concreta por agregado
   (`BooksFilterSpecification`, etc.) para expressar filtro/ordenacao/paginacao
   sem o Domain conhecer EF Core.
 - **Repositories/**: interfaces (`IRepository<T>` generico + uma por
-  agregado: `IBookRepository`, `IOrderRepository`, `IStockRepository`,
-  `IUserRepository`).
+  agregado: `IBookRepository`, `ICustomerRepository`, `IOrderRepository`,
+  `IStockRepository`, `IUserRepository`).
 
 ## Application (`src/ProductsCatalog.Application`)
 
 Aqui vive o CQRS propriamente dito.
 
-- **Features/{Books,Orders,Stocks,Users}/**: cada feature tem `Commands/` e
+- **Features/{Books,Customers,Orders,Stocks,Users}/**: cada feature tem `Commands/` e
   `Queries/`, e cada Command/Query tem sua propria pasta com
   `XCommand.cs` (o `record`), `XCommandValidator.cs` (FluentValidation,
   quando aplicavel) e `XCommandHandler.cs`. Esse e o "vertical slice":
@@ -108,6 +112,7 @@ inteiro terminar sem excecao.
 2. sender.Send(CreateOrderCommand)
 3. Pipeline: UnhandledException → Validation → Logging → UnitOfWork → Handler
 4. CreateOrderCommandHandler:
+     valida que o Customer existe (senao, NotFoundException -> 404)
      para cada item: busca o Book (preco), busca o Stock, chama Stock.Reserve()
      cria o Order (que valida invariantes e dispara OrderCreatedEvent)
 5. UnitOfWorkBehavior chama SaveChangesAsync (unica escrita no banco)
@@ -117,6 +122,43 @@ inteiro terminar sem excecao.
 
 Se o estoque for insuficiente, `Stock.Reserve` lanca `DomainException` antes
 do passo 5 - nada e persistido.
+
+## Autenticacao e autorizacao
+
+- **Emissao do token**: `POST /api/auth/login` (`LoginCommandHandler`) verifica
+  a senha (`IPasswordHasher.Verify`, PBKDF2 - mesma implementacao usada no
+  cadastro) e, se valida, pede um JWT a `IJwtTokenGenerator`. A implementacao
+  (`Infrastructure/Services/JwtTokenGenerator`) assina o token na mao com
+  `HMACSHA256`, no mesmo espirito do `PasswordHasher`: nenhum pacote novo
+  precisou ser adicionado so para emitir o token (a validacao, do lado da Api,
+  usa o pacote `Microsoft.AspNetCore.Authentication.JwtBearer`, que ja estava
+  referenciado desde o inicio do projeto mas nunca configurado).
+- **Claims**: o payload usa os nomes longos de `ClaimTypes.NameIdentifier` /
+  `ClaimTypes.Email` / `ClaimTypes.Role` - de proposito, porque
+  `TokenValidationParameters.DefaultRoleClaimType` do ASP.NET Core ja e
+  `ClaimTypes.Role`. Isso permite `[Authorize(Roles = nameof(ERole.Administrator))]`
+  funcionar sem nenhuma configuracao adicional de mapeamento de claims.
+- **Autorizacao por role**: a policy padrao (`FallbackPolicy`, em `Program.cs`)
+  exige apenas um usuario autenticado - e o suficiente para Seller criar/ver
+  pedidos. Endpoints exclusivos de Administrator (CRUD de livros, estoque,
+  clientes, usuarios, cancelamento de pedido) tem
+  `[Authorize(Roles = nameof(ERole.Administrator))]` **na action**, nunca no
+  controller inteiro nos controllers com permissoes mistas
+  (`BooksController`, `StocksController`, `CustomersController`): varios
+  `[Authorize]` no mesmo endpoint (um no controller, um no metodo) combinam
+  com AND, nao OR - um controller-level `Roles=Administrator` "vazaria" para
+  as actions de leitura, que devem ficar abertas a qualquer usuario
+  autenticado (inclusive Seller, que precisa ler livros/estoque/clientes para
+  montar um pedido). `UsersController` e o unico caso onde o controller
+  inteiro e Administrator-only, porque nenhuma action ali faz sentido pra
+  Seller.
+- **Bootstrap**: como e preciso estar logado para cadastrar usuarios,
+  `ApplicationDbContextSeeder` cria um Administrator padrao
+  (`admin@email.com`/`admin`) logo depois do `EnsureCreated()`, so em
+  Development - mesmo bloco que ja criava o schema (ver nota sobre
+  migrations). E idempotente (checa por email antes de inserir) e tolerante
+  a corrida entre instancias concorrentes subindo ao mesmo tempo (mesmo
+  padrao do `SchemaCreationLock` em `ApiWebApplicationFactory` - ver Testes).
 
 ## Testes
 
@@ -130,7 +172,19 @@ do passo 5 - nada e persistido.
 
 ## O que ficou fora do escopo (de proposito)
 
-- Autenticacao/JWT real (login, emissao de token) - ver nota no `README.md`.
+- **Excluir um Customer com pedidos existentes**: `Order.CustomerId` tem uma
+  FK real para `Customers` (`OnDelete(Restrict)`), entao o banco rejeita a
+  exclusao - mas o handler (`DeleteCustomerCommandHandler`) nao verifica isso
+  antes, entao o erro que chega pro usuario e uma excecao de banco crua (500),
+  nao uma mensagem de negocio amigavel. Mesma lacuna que ja existia antes
+  para `User`/`Order` (nunca foi tratada) - so mudou de entidade.
+- **Revogacao de token/refresh token**: o JWT emitido no login e valido por
+  8h e nao pode ser invalidado no servidor antes de expirar (ex: ao trocar de
+  senha, ou um "logout em todos os dispositivos") - implementar isso exigiria
+  guardar estado (uma blacklist de `jti`, tipicamente em cache/Redis, checada a
+  cada request). `LogoutCommand`/`Caching/` documentam isso como extension
+  point. Tambem nao ha refresh token nesta versao: expirado o token, e preciso
+  logar de novo.
 - Migrations do EF Core regeneradas (o ambiente onde este refactor foi feito
   nao tinha o `dotnet` CLI disponivel para rodar `dotnet ef migrations add`).
 - Mensageria (Kafka) e cache (Redis) - pastas `Messaging/` e `Caching/`

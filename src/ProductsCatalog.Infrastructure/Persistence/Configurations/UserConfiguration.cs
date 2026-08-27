@@ -23,7 +23,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         });
 
         builder.Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
-        builder.Property(u => u.Role).IsRequired().HasMaxLength(50);
+        builder.Property(u => u.Role).IsRequired().HasConversion<int>();
         builder.Property(u => u.CreatedAt).IsRequired();
         builder.Property(u => u.UpdatedAt).IsRequired();
     }

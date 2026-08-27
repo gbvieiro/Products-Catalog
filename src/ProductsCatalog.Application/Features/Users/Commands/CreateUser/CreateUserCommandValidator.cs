@@ -8,6 +8,6 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
         RuleFor(x => x.Password).NotEmpty().MinimumLength(6);
-        RuleFor(x => x.Role).NotEmpty();
+        RuleFor(x => x.Role).IsInEnum();
     }
 }

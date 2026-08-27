@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductsCatalog.Application.Common.Models;
 using ProductsCatalog.Application.Features.Orders;
@@ -7,6 +8,7 @@ using ProductsCatalog.Application.Features.Orders.Commands.CancelOrder;
 using ProductsCatalog.Application.Features.Orders.Commands.CreateOrder;
 using ProductsCatalog.Application.Features.Orders.Queries.GetOrderById;
 using ProductsCatalog.Application.Features.Orders.Queries.GetOrders;
+using ProductsCatalog.Domain.Enums;
 
 namespace ProductsCatalog.Api.Controllers;
 
@@ -29,6 +31,7 @@ public class OrdersController(ISender sender) : ControllerBase
     }
 
     [HttpPut("{id:guid}/cancel")]
+    [Authorize(Roles = nameof(ERole.Administrator))]
     public async Task<ActionResult<CancelOrderResult>> CancelAsync(Guid id)
     {
         var result = await sender.Send(new CancelOrderCommand(id));
@@ -36,11 +39,14 @@ public class OrdersController(ISender sender) : ControllerBase
     }
 
     /// <summary>
-    /// Pedidos do usuario autenticado. NOTA: este projeto ainda nao configura
-    /// um esquema de autenticacao (AddAuthentication/AddJwtBearer) em
-    /// Program.cs apesar do pacote JwtBearer estar referenciado - isso ja
-    /// vinha assim no projeto original. Sem login real, o claim abaixo nao
-    /// existira e o endpoint respondera 400. Ver README/aviso na resposta final.
+    /// Pedidos do cliente autenticado. NOTA: o claim NameIdentifier do JWT
+    /// carrega o Id do <c>User</c> (usuario/vendedor) logado, nao o Id de um
+    /// <c>Customer</c> - desde a introducao da entidade Customer, pedidos sao
+    /// vinculados a um Customer, e nao ha relacao entre User e Customer neste
+    /// projeto. Por isso este endpoint permanece nao funcional na pratica
+    /// (retornara sempre uma lista vazia) - isso e uma limitacao preexistente,
+    /// fora do escopo desta alteracao. Considere remover ou redesenhar este
+    /// endpoint caso "meus pedidos" volte a ser um requisito real.
     /// </summary>
     [HttpGet("my-orders")]
     public async Task<ActionResult<PagedResult<OrderDto>>> MyOrdersAsync(

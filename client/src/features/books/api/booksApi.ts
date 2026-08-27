@@ -12,4 +12,8 @@ export const booksApi = {
     const { data } = await httpClient.post<string>('/books', input)
     return data
   },
+
+  remove: async (id: string) => {
+    await httpClient.delete(`/books/${id}`)
+  },
 }

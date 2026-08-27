@@ -1,0 +1,29 @@
+# Build e execucao da Api para uso local/desenvolvimento - ver docker-compose.yml
+# (servico "api"). Para rodar a suite de testes automatizados, veja
+# docker/Dockerfile.tests, que e uma imagem separada.
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copia so os .csproj primeiro (Domain/Application/Infrastructure/Api, os unicos
+# de que a Api precisa) para o "dotnet restore" cachear entre builds e so
+# re-rodar quando uma dependencia mudar, nao a cada alteracao de codigo.
+COPY src/ProductsCatalog.Domain/ProductsCatalog.Domain.csproj src/ProductsCatalog.Domain/
+COPY src/ProductsCatalog.Application/ProductsCatalog.Application.csproj src/ProductsCatalog.Application/
+COPY src/ProductsCatalog.Infrastructure/ProductsCatalog.Infrastructure.csproj src/ProductsCatalog.Infrastructure/
+COPY src/ProductsCatalog.Api/ProductsCatalog.Api.csproj src/ProductsCatalog.Api/
+
+RUN dotnet restore src/ProductsCatalog.Api/ProductsCatalog.Api.csproj
+
+COPY src/ src/
+
+RUN dotnet publish src/ProductsCatalog.Api/ProductsCatalog.Api.csproj \
+    -c Release -o /app --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=build /app ./
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "ProductsCatalog.Api.dll"]

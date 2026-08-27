@@ -1,0 +1,92 @@
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+  margin-bottom: 14px;
+}
+
+.headline {
+  margin: 0 0 18px;
+  font-size: 44px;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 56ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+
+.whatGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 2px solid var(--color-divider);
+}
+
+@media (max-width: 900px) {
+  .whatGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.whatCard {
+  padding: 22px;
+  border-right: 2px solid var(--color-divider);
+  border-bottom: 2px solid var(--color-divider);
+}
+
+.whatCard:last-child {
+  border-right: none;
+}
+
+.whatTitle {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.whatBody {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  opacity: 0.7;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 48px;
+}
+
+@media (max-width: 860px) {
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.archList {
+  border-top: 2px solid var(--color-divider);
+}
+
+.archRow {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.archName {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: 14px;
+}
+
+.archBody {
+  font-size: 13px;
+  opacity: 0.75;
+}

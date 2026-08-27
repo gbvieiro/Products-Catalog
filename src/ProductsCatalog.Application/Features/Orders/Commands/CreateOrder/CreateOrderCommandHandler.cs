@@ -15,10 +15,14 @@ namespace ProductsCatalog.Application.Features.Orders.Commands.CreateOrder;
 public sealed class CreateOrderCommandHandler(
     IOrderRepository orderRepository,
     IBookRepository bookRepository,
-    IStockRepository stockRepository) : IRequestHandler<CreateOrderCommand, Guid>
+    IStockRepository stockRepository,
+    ICustomerRepository customerRepository) : IRequestHandler<CreateOrderCommand, Guid>
 {
     public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        _ = await customerRepository.GetByIdAsync(request.CustomerId, cancellationToken)
+            ?? throw new NotFoundException(nameof(Customer), request.CustomerId);
+
         var orderItems = new List<OrderItem>();
 
         foreach (var item in request.Items)

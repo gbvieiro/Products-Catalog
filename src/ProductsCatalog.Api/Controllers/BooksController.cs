@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductsCatalog.Application.Common.Models;
 using ProductsCatalog.Application.Features.Books;
@@ -11,12 +12,16 @@ using ProductsCatalog.Domain.Enums;
 
 namespace ProductsCatalog.Api.Controllers;
 
+// Leitura (GET) e liberada pra qualquer usuario autenticado - Seller precisa
+// listar livros para montar um pedido (ver CreateOrderForm no frontend).
+// Escrita (POST/PUT/DELETE) e so pra Administrator.
 [ApiController]
 [Route("api/[controller]")]
 public class BooksController(ISender sender) : ControllerBase
 {
     public sealed record UpdateBookRequest(double Price, string Title, string Author, EBookGenre Genre);
 
+    [Authorize(Roles = nameof(ERole.Administrator))]
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateBookCommand command)
     {
@@ -31,6 +36,7 @@ public class BooksController(ISender sender) : ControllerBase
         return book is null ? NotFound() : Ok(book);
     }
 
+    [Authorize(Roles = nameof(ERole.Administrator))]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateBookRequest request)
     {
@@ -38,6 +44,7 @@ public class BooksController(ISender sender) : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = nameof(ERole.Administrator))]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {

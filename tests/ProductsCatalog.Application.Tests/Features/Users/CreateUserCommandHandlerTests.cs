@@ -3,6 +3,7 @@ using Moq;
 using ProductsCatalog.Application.Common.Interfaces;
 using ProductsCatalog.Application.Features.Users.Commands.CreateUser;
 using ProductsCatalog.Domain.Entities;
+using ProductsCatalog.Domain.Enums;
 using ProductsCatalog.Domain.Repositories;
 using Xunit;
 
@@ -19,7 +20,7 @@ public class CreateUserCommandHandlerTests
         _passwordHasher.Setup(h => h.Hash("s3cret!")).Returns("hashed-value");
 
         var handler = new CreateUserCommandHandler(_userRepository.Object, _passwordHasher.Object);
-        var command = new CreateUserCommand("gabriel@example.com", "s3cret!", "Admin");
+        var command = new CreateUserCommand("gabriel@example.com", "s3cret!", ERole.Administrator);
 
         var userId = await handler.Handle(command, CancellationToken.None);
 

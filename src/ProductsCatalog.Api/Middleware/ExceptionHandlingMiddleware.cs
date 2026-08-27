@@ -51,6 +51,13 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                 problemDetails.Detail = notFoundException.Message;
                 break;
 
+            case UnauthorizedException unauthorizedException:
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                problemDetails.Title = "Unauthorized";
+                problemDetails.Status = context.Response.StatusCode;
+                problemDetails.Detail = unauthorizedException.Message;
+                break;
+
             case DomainException domainException:
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 problemDetails.Title = "Business rule violation";

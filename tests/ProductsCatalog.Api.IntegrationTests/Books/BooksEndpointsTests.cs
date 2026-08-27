@@ -9,9 +9,13 @@ using Xunit;
 
 namespace ProductsCatalog.Api.IntegrationTests.Books;
 
-public class BooksEndpointsTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWebApplicationFactory>
+public class BooksEndpointsTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWebApplicationFactory>, IAsyncLifetime
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private HttpClient _client = null!;
+
+    public async Task InitializeAsync() => _client = await factory.CreateAuthenticatedClientAsync();
+
+    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task CreateAndGetBook_ReturnsCreatedBook()

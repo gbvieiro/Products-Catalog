@@ -1,0 +1,83 @@
+.screen {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--color-bg);
+}
+
+@media (max-width: 860px) {
+  .screen {
+    grid-template-columns: 1fr;
+  }
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding: 48px;
+  border-right: 2px solid var(--color-divider);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-text) 55%, transparent),
+      color-mix(in srgb, var(--color-text) 88%, transparent)
+    ),
+    url('/images/hero-reading.jpg') center / cover no-repeat;
+  color: var(--color-bg);
+}
+
+@media (max-width: 860px) {
+  .intro {
+    border-right: none;
+    border-bottom: 2px solid var(--color-divider);
+  }
+}
+
+.brand {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+.headline {
+  font-size: 44px;
+  margin: 0 0 16px;
+  max-width: 12ch;
+  color: var(--color-bg);
+}
+
+.subhead {
+  max-width: 44ch;
+  font-size: 15px;
+  color: color-mix(in srgb, var(--color-bg) 78%, transparent);
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.formPane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 13px;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+}

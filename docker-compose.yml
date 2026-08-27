@@ -1,24 +1,83 @@
-# Uso: docker compose up --build --abort-on-container-exit
+# Uso local (backend + frontend):
+#   docker compose up --build
+#   -> Api em         http://localhost:5145/swagger
+#   -> Frontend em    http://localhost:5173
+#   -> Login padrao:  admin@email.com / admin (Administrator - troque a senha
+#                      depois; ver secao "Autenticacao e permissoes" no README.md)
 #
-# Sobe um Postgres descartavel e roda toda a suite de testes do backend
-# (Domain.Tests, Application.Tests e Api.IntegrationTests) dentro de um
-# container com o SDK do .NET - nao precisa ter o .NET instalado na maquina
-# para rodar os testes deste projeto.
+# Suite de testes automatizados (banco descartavel, separado do banco de uso
+# local acima para nao misturar dados nem conflitar quando os dois rodam ao
+# mesmo tempo):
+#   docker compose --profile test up --build --abort-on-container-exit postgres-tests tests
 #
-# Domain.Tests e Application.Tests nao tocam banco nenhum (usam objetos puros
-# e Moq). Api.IntegrationTests sobe a Api de verdade: por padrao contra um
-# banco InMemory, mas aqui passamos ConnectionStrings__DefaultConnection
-# apontando pro Postgres do compose, entao ela roda contra um banco real -
-# ver tests/ProductsCatalog.Api.IntegrationTests/Common/ApiWebApplicationFactory.cs.
+# postgres/api/client nao tem "profiles" -> sobem por padrao com "docker
+# compose up" (sem flags). postgres-tests/tests exigem "--profile test" e por
+# isso precisam ser passados explicitamente no segundo comando acima -
+# senao "--profile test" apenas ADICIONA esses dois aos tres primeiros, em
+# vez de rodar so a suite de testes.
 services:
   postgres:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: product_catalog_test
+      POSTGRES_DB: product_catalog
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=product_catalog;Username=postgres;Password=postgres"
+    ports:
+      - "5145:8080"
+
+  client:
+    build:
+      context: ./client
+    depends_on:
+      - api
+    environment:
+      # O proxy do Vite (ver client/vite.config.ts) roda dentro do container
+      # do client, entao ele enxerga o servico "api" pelo nome via a rede
+      # interna do compose - nao pelo host/porta publicados acima.
+      VITE_API_PROXY_TARGET: "http://api:8080"
+      # Bind mount abaixo (volumes) mais file watching no Docker as vezes nao
+      # dispara os eventos nativos do SO, principalmente no Windows/WSL -
+      # forcar polling evita que o hot-reload do Vite fique "travado".
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      # Volume anonimo "por cima" do node_modules do bind mount acima, para
+      # que o node_modules instalado DENTRO do container (no build da imagem)
+      # nao seja sobrescrito pelo do host (que pode nem existir, ou ter
+      # binarios nativos de outro SO).
+      - /app/node_modules
+
+  # --- suite de testes (docker compose --profile test up ...) ---
+
+  postgres-tests:
+    image: postgres:16-alpine
+    profiles: ["test"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: product_catalog_test
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -26,11 +85,15 @@ services:
       retries: 10
 
   tests:
+    profiles: ["test"]
     build:
       context: .
       dockerfile: docker/Dockerfile.tests
     depends_on:
-      postgres:
+      postgres-tests:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=product_catalog_test;Username=postgres;Password=postgres"
+      ConnectionStrings__DefaultConnection: "Host=postgres-tests;Port=5432;Database=product_catalog_test;Username=postgres;Password=postgres"
+
+volumes:
+  postgres_data:

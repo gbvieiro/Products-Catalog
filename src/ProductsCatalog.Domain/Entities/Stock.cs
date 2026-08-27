@@ -44,4 +44,19 @@ public class Stock : BaseEntity
         Quantity += quantity;
         Touch();
     }
+
+    /// <summary>
+    /// Define a quantidade em estoque para um valor absoluto (ex: correcao/
+    /// ajuste manual de inventario). Diferente de Reserve/Replenish, que
+    /// representam movimentacoes incrementais de fluxos de negocio (pedido,
+    /// recebimento de fornecedor), este e o "editar" administrativo usado
+    /// pela tela de CRUD de estoque.
+    /// </summary>
+    public void SetQuantity(int quantity)
+    {
+        DomainException.When(quantity < 0, "Stock quantity cannot be negative.");
+
+        Quantity = quantity;
+        Touch();
+    }
 }

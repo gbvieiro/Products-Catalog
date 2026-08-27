@@ -8,9 +8,11 @@ public sealed class UsersFilterSpecification : BaseSpecification<User>
     {
         if (!string.IsNullOrWhiteSpace(filterText))
         {
-            AddCriteria(u =>
-                u.Role.Contains(filterText) ||
-                u.Email.Address.Contains(filterText));
+            // Role agora e um enum (ERole), nao mais texto livre - nao da mais
+            // pra fazer Contains(filterText) nele (e nem seria um match
+            // confiavel via SQL comparando o int armazenado com uma string).
+            // O filtro de texto passa a valer so para o email.
+            AddCriteria(u => u.Email.Address.Contains(filterText));
         }
 
         AddOrderBy(u => u.CreatedAt, descending: true);
