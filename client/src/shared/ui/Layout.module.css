@@ -1,0 +1,43 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.nav {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.navLink,
+.navLinkActive {
+  text-decoration: none;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.navLinkActive {
+  color: #1a56db;
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}

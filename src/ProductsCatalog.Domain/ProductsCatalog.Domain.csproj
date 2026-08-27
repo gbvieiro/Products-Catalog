@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ProductsCatalog.Domain</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Unica dependencia externa do Domain. Trazemos apenas os marker interfaces
+      (INotification/IRequest) para poder expressar Domain Events como
+      MediatR.INotification e assim serem publicados pelo pipeline da
+      Application/Infrastructure sem que o Domain conheca MediatR de fato
+      (nenhum IMediator/ISender e usado aqui). Essa é a mesma abordagem adotada
+      pelo template "Clean Architecture" de Jason Taylor.
+    -->
+    <PackageReference Include="MediatR" Version="14.0.0" />
+  </ItemGroup>
+
+</Project>

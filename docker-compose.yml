@@ -1,0 +1,36 @@
+# Uso: docker compose up --build --abort-on-container-exit
+#
+# Sobe um Postgres descartavel e roda toda a suite de testes do backend
+# (Domain.Tests, Application.Tests e Api.IntegrationTests) dentro de um
+# container com o SDK do .NET - nao precisa ter o .NET instalado na maquina
+# para rodar os testes deste projeto.
+#
+# Domain.Tests e Application.Tests nao tocam banco nenhum (usam objetos puros
+# e Moq). Api.IntegrationTests sobe a Api de verdade: por padrao contra um
+# banco InMemory, mas aqui passamos ConnectionStrings__DefaultConnection
+# apontando pro Postgres do compose, entao ela roda contra um banco real -
+# ver tests/ProductsCatalog.Api.IntegrationTests/Common/ApiWebApplicationFactory.cs.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: product_catalog_test
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  tests:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.tests
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=product_catalog_test;Username=postgres;Password=postgres"

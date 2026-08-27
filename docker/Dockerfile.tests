@@ -1,0 +1,24 @@
+# Imagem usada apenas para RODAR os testes automatizados do backend (.NET).
+# Nao e usada para rodar a Api em producao - ver docker-compose.yml.
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+WORKDIR /src
+
+# Copia so os .csproj primeiro: o "dotnet restore" so precisa re-rodar (e o
+# Docker so invalida esse layer do cache) quando uma dependencia muda, nao a
+# cada alteracao de codigo.
+COPY ProductsCatalog.sln ./
+COPY src/ProductsCatalog.Domain/ProductsCatalog.Domain.csproj src/ProductsCatalog.Domain/
+COPY src/ProductsCatalog.Application/ProductsCatalog.Application.csproj src/ProductsCatalog.Application/
+COPY src/ProductsCatalog.Infrastructure/ProductsCatalog.Infrastructure.csproj src/ProductsCatalog.Infrastructure/
+COPY src/ProductsCatalog.Api/ProductsCatalog.Api.csproj src/ProductsCatalog.Api/
+COPY tests/ProductsCatalog.Domain.Tests/ProductsCatalog.Domain.Tests.csproj tests/ProductsCatalog.Domain.Tests/
+COPY tests/ProductsCatalog.Application.Tests/ProductsCatalog.Application.Tests.csproj tests/ProductsCatalog.Application.Tests/
+COPY tests/ProductsCatalog.Api.IntegrationTests/ProductsCatalog.Api.IntegrationTests.csproj tests/ProductsCatalog.Api.IntegrationTests/
+
+RUN dotnet restore ProductsCatalog.sln
+
+COPY src/ src/
+COPY tests/ tests/
+
+ENTRYPOINT ["dotnet", "test", "ProductsCatalog.sln", "--logger", "console;verbosity=normal"]
